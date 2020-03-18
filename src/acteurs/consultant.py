@@ -1,5 +1,6 @@
 from acteurs.individu import Individu, Ouvert
 from acteurs.data import donnees
+from menu.menu_ouvert import Ouvert
 
 class Consultant(Individu):
     def __init__(self):
@@ -14,9 +15,7 @@ class Consultant(Individu):
             except ValueError:
                 print("Votre réponse doit être un entier")
                 continue
-            try:
-                assert num_pays in [i for i in range(len(donnees))]
-            except AssertionError:
+            if num_pays not in [i for i in range(len(donnees))]:
                 print("Votre réponse ne correspond à aucun pays.")
                 continue
             break
@@ -25,3 +24,5 @@ class Consultant(Individu):
         print("Le pays que vous avez sélectionné est '{}'. Appuyez sur entrer pour continuer.".format(nom_pays))
         continuer = input("")
         return Ouvert(contenu)
+        
+        

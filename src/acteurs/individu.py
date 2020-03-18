@@ -6,8 +6,8 @@ class Individu:
         pass
     
     def quitter(self, contenu):
-        continuer = input("Voulez-vous continuer (O/N) ? ")
-        if continuer not in ['o', 'O']:
+        continuer = input("Voulez-vous vraiment quitter (O/N) ? ")
+        if continuer in ['o', 'O']:
             return Ferme()
         else:
             return Ouvert(contenu)
