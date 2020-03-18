@@ -16,7 +16,6 @@ class Ouvert:
             
         while True:
             choice = input("> ")
-            print(choice)
             try:
                 choice = int(choice)
             except ValueError:

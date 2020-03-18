@@ -7,7 +7,7 @@ class Consultant(Individu):
         pass
     
     def afficher_pays(self, contenu):
-        print("Donnez le numéro du pays que vous souhaiter afficher :")
+        print("\nDonnez le numéro du pays que vous souhaiter afficher :")
         while True:
             num_pays = input("> ")
             try:
@@ -15,7 +15,7 @@ class Consultant(Individu):
             except ValueError:
                 print("Votre réponse doit être un entier")
                 continue
-            if num_pays not in [i for i in range(len(donnees))]:
+            if num_pays not in [i for i in range(len(donnees))] or num_pays in [41, 67, 173, 203, 253, 254, 255, 258, 260]:
                 print("Votre réponse ne correspond à aucun pays.")
                 continue
             break
