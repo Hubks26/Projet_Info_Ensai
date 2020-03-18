@@ -5,6 +5,7 @@ class Ouvert:
         
     def run(self):
         print(self.contenu["question"])
+        print('\n')
         
         options = self.contenu["options"]
         nb_options = len(options)

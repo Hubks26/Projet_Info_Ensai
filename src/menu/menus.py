@@ -16,9 +16,9 @@ menus = [
     "action_options": 
     [
         (lambda contenu : indices_taches_permises([2, 3, 9, 10])),
-        (lambda contenu : Ouvert(menus[1])),
-        (lambda contenu : Ouvert(menus[1])),
-        (lambda contenu : Ouvert(menus[1])),
+        (lambda contenu : indices_taches_permises([0, 1, 2, 3, 4, 9, 10])),
+        (lambda contenu : indices_taches_permises([0, 1, 2, 5, 6, 9, 10])),
+        (lambda contenu : indices_taches_permises([0, 1, 2, 4, 5, 6, 7, 8, 9, 10])),
         Consultant().quitter
     ]
 },
@@ -50,7 +50,7 @@ menus = [
         'fonction5',
         'fonction6',
         'fonction7',
-        'fonction8',
+        (lambda contenu : Ouvert(menus[0])),
         Consultant().quitter
     ]
 }]
