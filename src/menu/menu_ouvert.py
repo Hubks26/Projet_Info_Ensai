@@ -4,6 +4,9 @@ class Ouvert:
         self.contenu = contenu
         
     def run(self):
+        
+        if self.contenu["pays"]:
+            print("PAYS : {}\n".format(self.contenu["pays"]))
         print(self.contenu["question"])
         print('\n')
         
@@ -19,10 +22,10 @@ class Ouvert:
             try:
                 choix = int(choix)
             except ValueError:
-                print("\nLa réponse attendue doit être un entier")
+                print("\nLa réponse attendue doit être un entier.")
                 continue
             if choix <= 0 or choix > nb_options:
-                print("\nLa réponse attendue doit être comprise entre 1 et {}".format(nb_options))
+                print("\nLa réponse attendue doit être comprise entre 1 et {}.".format(nb_options))
                 continue
             break
         return actions[choix-1](self.contenu)

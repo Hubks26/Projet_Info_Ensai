@@ -23,13 +23,14 @@ def indices_taches_permises(indices_taches, individu):
     menu_acteur["question"] = menus[1]["question"]
     menu_acteur["options"] = [menus[1]["options"][i] for i in indices_taches]
     menu_acteur["actions"] = [menus[1]["actions"][i] for i in indices_taches]
+    menu_acteur["pays"] = None
             
     return Ouvert(menu_acteur)
 
 # FONCTION TEMPORAIRE ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def temporaire_function(contenu):
-    print("\nVEUILLEZ D'ABORD VOUS CONNECTER")
-    continuer = input("Appuyez sur entrer pour continuer")
+    print("\nVEUILLEZ D'ABORD VOUS CONNECTER.")
+    continuer = input("Appuyez sur entrer pour continuer.")
     return Ouvert(contenu)
 
 menus = [
@@ -44,7 +45,7 @@ menus = [
         "Administrateur",
         "QUITTER"
     ],
-    "actions": 
+    "actions" : 
     [
         (lambda contenu : indices_taches_permises([1, 7, 8], Consultant())),
         (lambda contenu : indices_taches_permises([0, 1, 2, 7, 8], Data_Scientist())),
@@ -53,7 +54,9 @@ menus = [
         Individu().quitter
     ],
     "individu" :
-        Individu()
+        Individu(),
+    "pays" :
+        None
 },
 {
     "question" : 
@@ -70,7 +73,7 @@ menus = [
         "Retourner au menu de choix du statut",
         "QUITTER"
     ],
-    "actions": 
+    "actions" : 
     [
         connection,
         Individu().afficher_pays,
@@ -83,6 +86,8 @@ menus = [
         Individu().quitter
     ],
     "individu" :
-        Individu()
+        Individu(),
+    "pays" :
+        None
 }]
 

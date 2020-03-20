@@ -22,3 +22,4 @@ class Geographe:
             continuer = input("Appuyez sur entrer pour continuer.")
             
         return self.est_connecte
+    

@@ -15,13 +15,19 @@ class Individu:
         
     def afficher_section(self, sections_dispo, contenu):
         
+        choix_section = {}
+        choix_section["pays"] = contenu["pays"]
+        
+        if "Government" in list(sections_dispo):
+            choix_section["pays"] = sections_dispo['Government']['Country name']['conventional short form']['text']
+        
         if "text" in list(sections_dispo):
             print("\n")
+            #print("PAYS : {}\n".format(choix_section["pays"]))
             print(sections_dispo["text"])
             continuer = input("\nAppuyez sur entrer pour continuer.")
             return Ouvert(contenu)
-        
-        choix_section = {}
+
         choix_section["question"] = "Choisissez une option."
         choix_section["individu"] = contenu["individu"]
         choix_section["options"] = list(sections_dispo)
@@ -45,12 +51,14 @@ class Individu:
         choix_pays["individu"] = contenu["individu"]
         choix_pays["options"] = []
         choix_pays["actions"] = []
+        choix_pays["pays"] = None
         
         for num_pays in range(len(donnees)):
             if num_pays not in [41, 67, 173, 203, 253, 254, 255, 258, 260]:  # Trouver un moyen propre de faire ça
                 choix_pays["options"].append(donnees[num_pays]['Government']['Country name']['conventional short form']['text'])
                 tampon = donnees[num_pays]
                 choix_pays["actions"].append((lambda var, tampon=tampon : self.afficher_section(tampon, contenu)))
+                
         choix_pays["options"].append("RETOUR")
         choix_pays["actions"].append((lambda var : Ouvert(contenu)))
         choix_pays["options"].append("QUITTER")
