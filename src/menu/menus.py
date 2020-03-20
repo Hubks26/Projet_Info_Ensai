@@ -73,7 +73,7 @@ menus = [
     "actions": 
     [
         connection,
-        Consultant().afficher_pays,
+        Individu().afficher_pays,
         temporaire_function,
         temporaire_function,
         temporaire_function,

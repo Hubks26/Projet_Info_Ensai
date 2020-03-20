@@ -1,5 +1,5 @@
 from acteurs.individu import Individu
-from acteurs.data import donnees
+from gestion_des_donnees.donnees import donnees
 
 class Geographe:
     def __init__(self):

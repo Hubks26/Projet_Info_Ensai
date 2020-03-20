@@ -1,5 +1,5 @@
 from acteurs.geographe import Geographe
-from acteurs.data import donnees
+from gestion_des_donnees.donnees import donnees
 
 class Admin(Geographe):
     def __init__(self):

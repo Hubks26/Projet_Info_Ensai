@@ -1,5 +1,5 @@
 from acteurs.consultant import Consultant
-from acteurs.data import donnees
+from gestion_des_donnees.donnees import donnees
 
 class Data_Scientist(Consultant):
     def __init__(self):
