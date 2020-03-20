@@ -11,7 +11,7 @@ def connection(contenu):
     
     if menu_acteur["individu"].se_connecter():
         del menu_acteur["options"][0]
-        del menu_acteur["action_options"][0]
+        del menu_acteur["actions"][0]
         return Ouvert(menu_acteur)
     else:
         return Ouvert(contenu)
@@ -22,7 +22,7 @@ def indices_taches_permises(indices_taches, individu):
     menu_acteur["individu"] = individu
     menu_acteur["question"] = menus[1]["question"]
     menu_acteur["options"] = [menus[1]["options"][i] for i in indices_taches]
-    menu_acteur["action_options"] = [menus[1]["action_options"][i] for i in indices_taches]
+    menu_acteur["actions"] = [menus[1]["actions"][i] for i in indices_taches]
             
     return Ouvert(menu_acteur)
 
@@ -42,17 +42,17 @@ menus = [
         "Data Scientist", 
         "Géographe",
         "Administrateur",
-        "Quitter"
+        "QUITTER"
     ],
-    "action_options": 
+    "actions": 
     [
-        (lambda contenu : indices_taches_permises([1, 2, 8, 9], Consultant())),
-        (lambda contenu : indices_taches_permises([0, 1, 2, 3, 8, 9], Data_Scientist())),
-        (lambda contenu : indices_taches_permises([0, 1, 4, 5, 8, 9], Geographe())),
-        (lambda contenu : indices_taches_permises([0, 1, 3, 4, 5, 6, 7, 8, 9], Admin())),
+        (lambda contenu : indices_taches_permises([1, 7, 8], Consultant())),
+        (lambda contenu : indices_taches_permises([0, 1, 2, 7, 8], Data_Scientist())),
+        (lambda contenu : indices_taches_permises([0, 1, 3, 4, 7, 8], Geographe())),
+        (lambda contenu : indices_taches_permises([0, 1, 2, 3, 4, 5, 6, 7, 8], Admin())),
         Individu().quitter
     ],
-    "Individu" :
+    "individu" :
         Individu()
 },
 {
@@ -62,20 +62,18 @@ menus = [
     [   
         "Se connecter",
         "Afficher les données d'un pays",
-        "Proposer une correction",
         "Acceder aux résumés statistiques",
         "Décider de valider ou de refuser une correction",
-        "Ajouter ou modifier un pays",
+        "Ajouter un pays",
         "Supprimer un pays",
         "Créer ou Supprimer un compte",
         "Retourner au menu de choix du statut",
-        "Quitter"
+        "QUITTER"
     ],
-    "action_options": 
+    "actions": 
     [
         connection,
         Consultant().afficher_pays,
-        temporaire_function,
         temporaire_function,
         temporaire_function,
         temporaire_function,

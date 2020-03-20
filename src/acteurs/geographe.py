@@ -9,14 +9,16 @@ class Geographe:
         
     def se_connecter(self):
         
-        pseudo = input("Entrez votre pseudo : ")
+        pseudo = input("\nEntrez votre pseudo : ")
         mot_de_passe = input("Entrez votre mot de passe : ")
         
         if self.pseudo == pseudo and self.mot_de_passe == mot_de_passe:
-            continuer = input("Vous êtes connecté ! Appuyez sur entrer pour continuer")
+            print("\nVous êtes connecté !")
+            continuer = input("Appuyez sur entrer pour continuer.")
             self.est_connecte = True
             
         else:
-            continuer = input("Votre connexion a échoué. Appuyez sur entrer pour continuer")
+            print("\nVotre connexion a échoué.")
+            continuer = input("Appuyez sur entrer pour continuer.")
             
         return self.est_connecte

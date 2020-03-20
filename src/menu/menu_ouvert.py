@@ -9,20 +9,20 @@ class Ouvert:
         
         options = self.contenu["options"]
         nb_options = len(options)
-        options_action =self.contenu["action_options"]
+        actions = self.contenu["actions"]
         
         for i, opt in enumerate(options):
             print("[{}] {}".format(i+1, opt))
             
         while True:
-            choice = input("> ")
+            choix = input("\n> ")
             try:
-                choice = int(choice)
+                choix = int(choix)
             except ValueError:
-                print("La réponse attendue doit être un entier")
+                print("\nLa réponse attendue doit être un entier")
                 continue
-            if choice <= 0 or choice > nb_options:
-                print("La réponse attendue doit être comprise entre 1 et {}".format(nb_options))
+            if choix <= 0 or choix > nb_options:
+                print("\nLa réponse attendue doit être comprise entre 1 et {}".format(nb_options))
                 continue
             break
-        return options_action[choice-1](self.contenu)
+        return actions[choix-1](self.contenu)
