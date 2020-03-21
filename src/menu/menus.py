@@ -69,7 +69,7 @@ menus = [
         "Décider de valider ou de refuser une correction",
         "Ajouter un pays",
         "Supprimer un pays",
-        "Créer ou Supprimer un compte",
+        "Créer [ou Supprimer] un compte",
         "Retourner au menu de choix du statut",
         "QUITTER"
     ],
@@ -81,7 +81,7 @@ menus = [
         temporaire_function,
         temporaire_function,
         temporaire_function,
-        temporaire_function,
+        (lambda contenu : contenu["individu"].creer_compte(contenu)),
         (lambda contenu : Ouvert(menus[0])),
         Individu().quitter
     ],
