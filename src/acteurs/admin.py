@@ -13,7 +13,7 @@ class Admin(Geographe):
                 type_de_compte = input("\nQuel type de compte voulez vous créer (a/g/d) ? : ")
                 if type_de_compte in ["a", "g", "d"]:
                     break
-                print("\nLa réponse attendue doit être : a pour Admin, g pour Géographe ou d pour Data Sientist.")
+                print("\nLa réponse attendue doit être : a pour Admin, g pour Géographe ou d pour Data Scientist.")
             while True:
                 pseudo = input("Entrez le pseudo : ")
                 if len(pseudo) >= 1:
