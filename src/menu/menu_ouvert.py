@@ -6,9 +6,8 @@ class Ouvert:
     def run(self):
         
         if self.contenu["pays"]:
-            print("PAYS : {}\n".format(self.contenu["pays"]))
-        print(self.contenu["question"])
-        print('\n')
+            print("{} : {}\n".format(self.contenu["pays"], self.contenu["question"]))
+        else : print("{}\n".format(self.contenu["question"]))
         
         options = self.contenu["options"]
         nb_options = len(options)

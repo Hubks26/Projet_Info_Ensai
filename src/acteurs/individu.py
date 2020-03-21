@@ -47,7 +47,7 @@ class Individu:
     def afficher_pays(self, contenu):
         
         choix_pays = {}
-        choix_pays["question"] = "Choisissez une option."
+        choix_pays["question"] = "Choisissez un pays."
         choix_pays["individu"] = contenu["individu"]
         choix_pays["options"] = []
         choix_pays["actions"] = []
