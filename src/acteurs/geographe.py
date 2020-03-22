@@ -9,13 +9,8 @@ class Geographe:
     def se_connecter(self):
         
         with open("../files/comptes.txt", "r") as comptes:
-            tampon = []
             liste_des_comptes = []
-            ligne = None
-            while ligne != "":
-                ligne = comptes.readline()
-                tampon.append(ligne)
-        tampon.pop() # Retire le dernier élément du tableau qui est ""
+            tampon = comptes.readlines()
         for s in tampon:
             liste_des_comptes.append(s[:-1]) #Supprime le caractère responsable du retour à la ligne
         n = len(liste_des_comptes)
