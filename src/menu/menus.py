@@ -48,7 +48,7 @@ def ajouter_ou_supprimer_compte(contenu):
 
 # FONCTION TEMPORAIRE ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def temporaire_function(contenu):                                                                                    #
-    print("\nVEUILLEZ D'ABORD VOUS CONNECTER.")                                                                      #
+    print("\nCette fonctionnalité n'a pas encore été codée")                                                                      #
     continuer = input("Appuyez sur entrer pour continuer.")                                                          #
     return Ouvert(contenu)                                                                                           #
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
