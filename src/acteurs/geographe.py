@@ -1,5 +1,8 @@
 from acteurs.individu import Individu
-from gestion_des_donnees.donnees import donnees
+from menu.menu_ouvert import Ouvert
+import json
+filename = "data.json"
+directory_data = "../files/"
 
 class Geographe:
     def __init__(self):
@@ -32,3 +35,100 @@ class Geographe:
             continuer = input("Appuyez sur entrer pour continuer.")
             
         return self.est_connecte
+    
+    def afficher_section(self, section, sections_dispo, contenu):
+        
+        with open(directory_data + filename) as json_file:
+            donnees = json.load(json_file)
+        
+            choix_section = {}
+            choix_section["chemin de la recherche"] = contenu["chemin de la recherche"]
+            
+            if isinstance(section, int):
+                choix_section["chemin de la recherche"].append(sections_dispo['Government']['Country name']['conventional short form']['text'])
+                
+            choix_section["chemin de la recherche"].append(section)
+            
+            if "text" in list(sections_dispo):
+                print("\n")
+                print("PAYS : {}\n".format(choix_section["chemin de la recherche"][0]))
+                chemin = contenu["chemin de la recherche"][1:]
+                tampon = donnees[chemin[0]]
+                for section in chemin[1:]:
+                    tampon = tampon[section]
+                print(tampon["text"])
+                rep = input("\nVoulez vous modifier le texte (O/N) ?\n> ")
+                if rep in ["o","O"]:
+                    self.modifier_texte(choix_section)
+                choix_section["chemin de la recherche"].pop()
+                return Ouvert(contenu)
+
+            choix_section["question"] = "Choisissez une option."
+            choix_section["individu"] = contenu["individu"]
+            choix_section["options"] = list(sections_dispo)
+            choix_section["actions"] = []
+            
+            for sec in list(sections_dispo):
+                tampon1 = sec
+                tampon2 = sections_dispo[sec]
+                choix_section["actions"].append((lambda contenu, tampon1=tampon1, tampon2=tampon2 : self.afficher_section(tampon1, tampon2, contenu)))
+                
+            choix_section["options"].append("RETOUR")
+            choix_section["actions"].append((lambda var : self.retour_section(contenu)))
+            choix_section["options"].append("QUITTER")
+            choix_section["actions"].append(Individu().quitter)
+        
+        return Ouvert(choix_section)
+    
+    def retour_section(self, contenu):
+        contenu["chemin de la recherche"].pop()
+        if len(contenu["chemin de la recherche"]) == 1:
+            contenu["chemin de la recherche"].pop()
+        return Ouvert(contenu)
+    
+    def afficher_pays(self, contenu):
+        
+        with open(directory_data + filename) as json_file:
+            donnees = json.load(json_file)
+        
+            choix_pays = {}
+            choix_pays["question"] = "Choisissez un pays."
+            choix_pays["individu"] = contenu["individu"]
+            choix_pays["options"] = []
+            choix_pays["actions"] = []
+            choix_pays["chemin de la recherche"] = []
+            
+            for num_pays in range(len(donnees)):
+                if num_pays not in [41, 67, 173, 203, 253, 254, 255, 258, 260]:  # Trouver un moyen propre de faire ça
+                    choix_pays["options"].append(donnees[num_pays]['Government']['Country name']['conventional short form']['text'])
+                    tampon1 = num_pays
+                    tampon2 = donnees[num_pays]
+                    choix_pays["actions"].append((lambda var, tampon1=tampon1, tampon2=tampon2 : self.afficher_section(tampon1, tampon2, contenu)))
+                    
+            choix_pays["options"].append("RETOUR")
+            choix_pays["actions"].append((lambda var : Ouvert(contenu)))
+            choix_pays["options"].append("QUITTER")
+            choix_pays["actions"].append(Individu().quitter)
+        
+        return Ouvert(choix_pays)
+    
+    def modifier_texte(self, contenu):
+        if not self.est_connecte:
+            continuer = input("\nVEUILLEZ D'ABORD VOUS CONNECTER.\nAppuyez sur entrer pour continuer.")
+        else:
+            modification = input("\nEntrez le nouveau texte :\n> ")
+            with open(directory_data + filename) as json_file:
+                donnees = json.load(json_file)
+            chemin = contenu["chemin de la recherche"][1:]
+            tampon = donnees[chemin[0]]
+            for section in chemin[1:]:
+                tampon = tampon[section]
+                
+            confirmation = input("\n Confirmation de la modification (O/N) ?\n> ")
+            if confirmation in ["o","O"]:
+                tampon["text"] = modification # Ici on modifie bien la variable donnees
+                with open(directory_data + filename, "w") as json_file:
+                    json.dump(donnees, json_file)
+                continuer = input("\nVotre modification a bien été enregistrée.\nAppuyez sur entrer pour continuer.")
+            else :
+                continuer = input("\nVotre tentative de modification n'a pas abouti.\nAppuyez sur entrer pour continuer.")

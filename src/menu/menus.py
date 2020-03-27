@@ -23,7 +23,7 @@ def indices_taches_permises(indices_taches, individu):
     menu_acteur["question"] = menus[1]["question"]
     menu_acteur["options"] = [menus[1]["options"][i] for i in indices_taches]
     menu_acteur["actions"] = [menus[1]["actions"][i] for i in indices_taches]
-    menu_acteur["pays"] = None
+    menu_acteur["chemin de la recherche"] = []
             
     return Ouvert(menu_acteur)
 
@@ -35,7 +35,7 @@ def ajouter_ou_supprimer_compte(contenu):
     
         menu_choix_ajouter_supprimer["question"] = "Voulez vous créer ou supprimer un compte ?"
         menu_choix_ajouter_supprimer["options"] = ["Créer","Supprimer","Retour","QUITTER"]
-        menu_choix_ajouter_supprimer["pays"] = contenu["pays"]
+        menu_choix_ajouter_supprimer["chemin de la recherche"] = contenu["chemin de la recherche"]
         menu_choix_ajouter_supprimer["actions"] = [(lambda contenu : contenu["individu"].creer_compte(contenu)), (lambda contenu : contenu["individu"].supprimer_compte(contenu)), (lambda var : Ouvert(contenu)), Individu().quitter]
         return Ouvert(menu_choix_ajouter_supprimer)
     
@@ -75,8 +75,8 @@ menus = [
     ],
     "individu" :
         Individu(),
-    "pays" :
-        None
+    "chemin de la recherche" :
+        []
 },
 {
     "question" : 
@@ -96,7 +96,7 @@ menus = [
     "actions" : 
     [
         connection,
-        Individu().afficher_pays,
+        (lambda contenu : contenu["individu"].afficher_pays(contenu)),
         temporaire_function,
         temporaire_function,
         temporaire_function,
@@ -107,7 +107,7 @@ menus = [
     ],
     "individu" :
         Individu(),
-    "pays" :
-        None
+    "chemin de la recherche" :
+        []
 }]
 

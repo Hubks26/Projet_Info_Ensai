@@ -5,8 +5,8 @@ class Ouvert:
         
     def run(self):
         
-        if self.contenu["pays"]:
-            print("{} : {}\n".format(self.contenu["pays"], self.contenu["question"]))
+        if len(self.contenu["chemin de la recherche"]) != 0:
+            print("{} : {}\n".format(self.contenu["chemin de la recherche"][0], self.contenu["question"]))
         else : print("{}\n".format(self.contenu["question"]))
         
         options = self.contenu["options"]

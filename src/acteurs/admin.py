@@ -1,5 +1,4 @@
 from acteurs.geographe import Geographe
-from gestion_des_donnees.donnees import donnees
 from menu.menu_ouvert import Ouvert
 
 class Admin(Geographe):
@@ -24,11 +23,11 @@ class Admin(Geographe):
             print("\nLa réponse attendue doit être : a pour Admin, g pour Géographe ou d pour Data Scientist.")
         while True:
             pseudo = input("Entrez le pseudo : ")
-            if len(pseudo) >= 1:
+            if len(pseudo) >= 2:
                 if pseudo not in liste_des_pseudos:
                     break
                 else : print("\nCe pseudo est déjà attribué à quelqu'un, veuillez en choisir un autre.\n")
-            else : print("\nVotre pseudo doit contenir au moins 1 caractères.\n")
+            else : print("\nVotre pseudo doit contenir au moins 2 caractères.\n")
         while True:
             while True: # On peut faire ça sans mettre deux while True, faire ça plus proprement si on a le temps.
                 mot_de_passe = input("Entrez le mot de passe : ")
