@@ -68,6 +68,8 @@ class Individu:
                 choix_section["actions"].append(lambda var : self.ajout_section(var, contenu))
             choix_section["options"].append("RETOUR")
             choix_section["actions"].append(lambda var : self.retour_section(contenu))
+            choix_section["options"].append("RETOUR AU MENU DE L'ACTEUR")
+            choix_section["actions"].append(lambda var : Ouvert(self.contenu_du_menu_initial))
             choix_section["options"].append("QUITTER")
             choix_section["actions"].append(Individu().quitter)
         
@@ -110,7 +112,7 @@ class Individu:
             if self.statut == "g" or self.statut == "a":
                 choix_pays["options"].append("AJOUTER UN PAYS")
                 choix_pays["actions"].append(lambda var : self.ajout_pays(contenu, var))
-            choix_pays["options"].append("RETOUR")
+            choix_pays["options"].append("RETOUR AU MENU DE L'ACTEUR")
             choix_pays["actions"].append(lambda var : Ouvert(self.contenu_du_menu_initial))
             choix_pays["options"].append("QUITTER")
             choix_pays["actions"].append(Individu().quitter)
