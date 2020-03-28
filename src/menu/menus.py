@@ -48,8 +48,12 @@ def ajouter_ou_supprimer_compte(contenu):
 
 # FONCTION TEMPORAIRE ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def temporaire_function(contenu):                                                                                    #
-    print("\nCette fonctionnalité n'a pas encore été codée")                                                                      #
-    continuer = input("Appuyez sur entrer pour continuer.")                                                          #
+    if not contenu["individu"].est_connecte:                                                                         #
+        print("\nVEUILLEZ D'ABORD VOUS CONNECTER.")                                                                  #   
+        continuer = input("Appuyez sur entrer pour continuer.")                                                      #
+    else:                                                                                                            #
+        print("\nCette fonctionnalité n'a pas encore été codée...")                                                  #   
+        continuer = input("Appuyez sur entrer pour continuer.")                                                      #  
     return Ouvert(contenu)                                                                                           #
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
