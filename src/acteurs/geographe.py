@@ -58,7 +58,7 @@ class Geographe(Individu):
             else :
                 continuer = input("\nVotre tentative de modification n'a pas abouti.\nAppuyez sur entrer pour continuer.")
                 
-    def ajout_section(self, contenu, contenu_precedent):
+    def ajout_section(self, contenu, contenu_precedent): # Il doit y avoir un moyen plus simple de faire cette fonction
         if not self.est_connecte:
             continuer = input("\nVEUILLEZ D'ABORD VOUS CONNECTER.\nAppuyez sur entrer pour continuer.")
             return Ouvert(contenu)
@@ -117,7 +117,7 @@ class Geographe(Individu):
             else:
                 return Ouvert(contenu)
             
-    def ajout_pays(self, contenu, contenu_precedent):
+    def ajout_pays(self, contenu, contenu_precedent): # Il doit y avoir un moyen plus simple de faire cette fonction.
         if not self.est_connecte:
             continuer = input("\nVEUILLEZ D'ABORD VOUS CONNECTER.\nAppuyez sur entrer pour continuer.")
             return Ouvert(contenu_precedent)

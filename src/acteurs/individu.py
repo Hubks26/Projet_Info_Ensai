@@ -64,8 +64,11 @@ class Individu:
                 choix_section["actions"].append((lambda contenu, tampon1=tampon1 : self.afficher_section(tampon1, contenu)))
                 
             if self.statut == "g" or self.statut == "a":
-                choix_section["options"].append("AJOUTER")
+                choix_section["options"].append("AJOUTER UNE SECTION OU UN TEXTE")
                 choix_section["actions"].append(lambda var : self.ajout_section(var, contenu))
+            if self.statut == "a":
+                choix_section["options"].append("SUPPRIMER UNE SECTION")
+                choix_section["actions"].append(lambda var : self.supprimer_section(var, contenu))
             choix_section["options"].append("RETOUR")
             choix_section["actions"].append(lambda var : self.retour_section(contenu))
             choix_section["options"].append("RETOUR AU MENU DE L'ACTEUR")
@@ -129,4 +132,7 @@ class Individu:
         pass
     
     def ajout_pays(self, contenu, contenu_precedent):
+        pass
+    
+    def supprimer_section(self, contenu, contenu_precedent):
         pass

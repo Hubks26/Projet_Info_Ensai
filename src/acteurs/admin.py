@@ -1,5 +1,8 @@
 from acteurs.geographe import Geographe
 from menu.menu_ouvert import Ouvert
+import json
+filename = "data.json"
+directory_data = "../files/"
 
 class Admin(Geographe):
     def __init__(self):
@@ -74,3 +77,33 @@ class Admin(Geographe):
                     comptes.write(line+"\n")
             continuer = input("\nLe compte de {} a bien été supprimé.\nAppuyez sur entrer pour continuer.".format(pseudo_a_supprimer))
         return Ouvert(contenu)
+    
+    def supprimer_section(self, contenu, contenu_precedent): # Il doit y avoir un moyen plus simple de faire cette fonction
+        if not self.est_connecte:
+            continuer = input("\nVEUILLEZ D'ABORD VOUS CONNECTER.\nAppuyez sur entrer pour continuer.")
+            return Ouvert(contenu)
+        section_a_supprimer = input("\nVeuillez entrer le nom de la section à supprimer : ")
+        with open(directory_data + filename) as json_file:
+            donnees = json.load(json_file)
+        chemin = contenu["chemin de la recherche"][1:]
+        contenu_section = donnees[chemin[0]]
+        for section in chemin[1:]:
+            contenu_section = contenu_section[section]
+        if section_a_supprimer in contenu_section.keys():
+            confirmation = input("\nConfirmation de la suppression de la section #Cela supprimera aussi toutes ses sous-sections# (O/N) ?\n> ")
+            if confirmation in ["o","O"]:
+                del contenu_section[section_a_supprimer]
+                with open(directory_data + filename, "w") as json_file:
+                    json.dump(donnees, json_file)
+                continuer = input("\nLa section a bien été supprimée.\nAppuyez sur entrer pour continuer.")
+            else :
+                continuer = input("\nVotre tentative de suppression n'a pas abouti.\nAppuyez sur entrer pour continuer.")
+                return Ouvert(contenu)
+        else:
+            continuer = input("\nCette section n'existe pas.\nAppuyez sur entrer pour continuer.")
+            return Ouvert(contenu)
+        tampon = contenu["chemin de la recherche"].pop()
+        if len(contenu["chemin de la recherche"]) == 1:
+            contenu["chemin de la recherche"].pop()
+        return self.afficher_section(tampon, contenu_precedent)
+            
