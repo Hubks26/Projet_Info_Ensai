@@ -90,14 +90,19 @@ class Admin(Geographe):
         for section in chemin[1:]:
             contenu_section = contenu_section[section]
         if section_a_supprimer in contenu_section.keys():
-            confirmation = input("\nConfirmation de la suppression de la section #Cela supprimera aussi toutes ses sous-sections# (O/N) ?\n> ")
-            if confirmation in ["o","O"]:
-                del contenu_section[section_a_supprimer]
-                with open(directory_data + filename, "w") as json_file:
-                    json.dump(donnees, json_file)
-                continuer = input("\nLa section a bien été supprimée.\nAppuyez sur entrer pour continuer.")
-            else :
-                continuer = input("\nVotre tentative de suppression n'a pas abouti.\nAppuyez sur entrer pour continuer.")
+            suppression_possible = not((section_a_supprimer == "Government" and len(chemin) == 1) or (section_a_supprimer == "Country name") or (section_a_supprimer == "conventional short form"))
+            if suppression_possible:
+                confirmation = input("\nConfirmation de la suppression de la section (O/N) ? #Cela supprimera aussi toutes ses sous-sections#\n> ")
+                if confirmation in ["o","O"]:
+                    del contenu_section[section_a_supprimer]
+                    with open(directory_data + filename, "w") as json_file:
+                        json.dump(donnees, json_file)
+                    continuer = input("\nLa section a bien été supprimée.\nAppuyez sur entrer pour continuer.")
+                else :
+                    continuer = input("\nVotre tentative de suppression n'a pas abouti.\nAppuyez sur entrer pour continuer.")
+                    return Ouvert(contenu)
+            else:
+                continuer = input("\nVous ne pouvez pas supprimer cette section car elle est suceptible de contenir le nom du pays.\nAppuyez sur entrer pour continuer.")
                 return Ouvert(contenu)
         else:
             continuer = input("\nCette section n'existe pas.\nAppuyez sur entrer pour continuer.")
@@ -106,4 +111,34 @@ class Admin(Geographe):
         if len(contenu["chemin de la recherche"]) == 1:
             contenu["chemin de la recherche"].pop()
         return self.afficher_section(tampon, contenu_precedent)
+    
+    def supprimer_pays(self, contenu, contenu_precedent):
+        if not self.est_connecte:
+            continuer = input("\nVEUILLEZ D'ABORD VOUS CONNECTER.\nAppuyez sur entrer pour continuer.")
+            return Ouvert(contenu_precedent)
+        pays_a_supprimer = input("\nVeuillez entrer le nom du pays à supprimer : ")
+        with open(directory_data + filename) as json_file:
+            donnees = json.load(json_file)
+        
+        with open("../files/liste_pays_sans_nom.txt", "r") as liste:
+            liste_pays_sans_nom0 = liste.readlines()
+        liste_pays_sans_nom = []
+        for elm in liste_pays_sans_nom0:
+            liste_pays_sans_nom.append(int(elm[:-1]))
             
+        for num_pays in range(len(donnees)):
+            if num_pays not in liste_pays_sans_nom and pays_a_supprimer == donnees[num_pays]['Government']['Country name']['conventional short form']['text']:
+                confirmation = input("\nConfirmation de la suppression du pays (O/N) ? #Cela est irréverssible#\n> ")
+                if confirmation in ["o","O"]:
+                    donnees[num_pays] = {}
+                    with open(directory_data + filename, "w") as json_file:
+                        json.dump(donnees, json_file)
+                    with open("../files/liste_pays_sans_nom.txt", "a") as liste:
+                        liste.write("{}\n".format(num_pays))
+                    continuer = input("\nLe pays a bien été supprimée.\nAppuyez sur entrer pour continuer.")
+                    return self.afficher_pays(contenu)
+                else :
+                    continuer = input("\nVotre tentative de suppression n'a pas abouti.\nAppuyez sur entrer pour continuer.")
+                    return Ouvert(contenu_precedent)
+        continuer = input("\nCe pays n'est pas dans la liste.\nAppuyez sur entrer pour continuer.")
+        return Ouvert(contenu_precedent)

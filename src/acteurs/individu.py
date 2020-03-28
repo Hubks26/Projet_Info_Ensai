@@ -106,8 +106,14 @@ class Individu:
             choix_pays["actions"] = []
             choix_pays["chemin de la recherche"] = []
             
+            with open("../files/liste_pays_sans_nom.txt", "r") as liste:
+                liste_pays_sans_nom0 = liste.readlines()
+            liste_pays_sans_nom = []
+            for elm in liste_pays_sans_nom0:
+                liste_pays_sans_nom.append(int(elm[:-1]))
+            
             for num_pays in range(len(donnees)):
-                if num_pays not in [41, 67, 173, 203, 253, 254, 255, 258, 260]:  # Trouver un moyen propre de faire ça
+                if num_pays not in liste_pays_sans_nom:
                     choix_pays["options"].append(donnees[num_pays]['Government']['Country name']['conventional short form']['text'])
                     tampon1 = num_pays
                     choix_pays["actions"].append((lambda var, tampon1=tampon1 : self.afficher_section(tampon1, contenu)))
@@ -115,6 +121,9 @@ class Individu:
             if self.statut == "g" or self.statut == "a":
                 choix_pays["options"].append("AJOUTER UN PAYS")
                 choix_pays["actions"].append(lambda var : self.ajout_pays(contenu, var))
+            if self.statut == "a":
+                choix_pays["options"].append("SUPPRIMER UN PAYS")
+                choix_pays["actions"].append(lambda var : self.supprimer_pays(contenu, var))
             choix_pays["options"].append("RETOUR AU MENU DE L'ACTEUR")
             choix_pays["actions"].append(lambda var : Ouvert(self.contenu_du_menu_initial))
             choix_pays["options"].append("QUITTER")
@@ -135,4 +144,7 @@ class Individu:
         pass
     
     def supprimer_section(self, contenu, contenu_precedent):
+        pass
+    
+    def supprimer_pays(self, contenu, contenu_precedent):
         pass

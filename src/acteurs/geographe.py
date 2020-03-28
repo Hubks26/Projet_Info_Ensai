@@ -126,8 +126,15 @@ class Geographe(Individu):
             with open(directory_data + filename) as json_file:
                 donnees = json.load(json_file)
             liste_des_pays = []
+            
+            with open("../files/liste_pays_sans_nom.txt", "r") as liste:
+                liste_pays_sans_nom0 = liste.readlines()
+            liste_pays_sans_nom = []
+            for elm in liste_pays_sans_nom0:
+                liste_pays_sans_nom.append(int(elm[:-1]))
+                
             for num_pays in range(len(donnees)):
-                if num_pays not in [41, 67, 173, 203, 253, 254, 255, 258, 260]:
+                if num_pays not in liste_pays_sans_nom:
                     liste_des_pays.append(donnees[num_pays]['Government']['Country name']['conventional short form']['text'])
             if nom_pays not in liste_des_pays:
                 confirmation = input("\nConfirmation de l'ajout du pays (O/N) ?\n> ")
