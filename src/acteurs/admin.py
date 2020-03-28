@@ -4,8 +4,8 @@ from menu.menu_ouvert import Ouvert
 class Admin(Geographe):
     def __init__(self):
         self.est_connecte = False
-        self.contenu_du_menu_initial = {}
         self.statut = "a"
+        self.contenu_du_menu_initial = {}
         
     def creer_compte(self, contenu):
         

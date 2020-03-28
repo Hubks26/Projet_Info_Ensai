@@ -4,6 +4,7 @@ class Data_Scientist(Consultant):
     def __init__(self):
         self.est_connecte = False
         self.statut = "d"
+        self.contenu_du_menu_initial = {}
         
     def se_connecter(self):
         
