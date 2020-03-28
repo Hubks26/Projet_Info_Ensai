@@ -90,7 +90,7 @@ menus = [
         "Ajouter un pays",
         "Ajouter ou supprimer un pays",
         "Créer ou supprimer un compte",
-        "Retourner au menu de choix du statut",
+        "RETOUR AU MENU DE CHOIX DU STATUT",
         "QUITTER"
     ],
     "actions" : 
