@@ -28,7 +28,6 @@ class Geographe(Individu):
         for i in range(len(liste_des_statuts)):
             if self.statut == liste_des_statuts[i] and pseudo == liste_des_pseudos[i] and mot_de_passe == liste_des_mots_de_passe[i]:
                 self.est_connecte = True
-                print(self.est_connecte)
                 print("\nVous êtes connecté !")
                 continuer = input("Appuyez sur entrer pour continuer.")
 
