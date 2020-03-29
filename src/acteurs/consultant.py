@@ -11,9 +11,15 @@ class Consultant(Individu):
         self.contenu_du_menu_initial = {}
     
     def proposer_correction(self, contenu):
-        correction = input("\nEntrez la proposition de correction :\n> ")
-        
+        while True:
+            correction = input("\nEntrez la proposition de correction :\n> ")
+            if len(correction) > 1:
+                break
+            print("\nVotre texte doit contenir au moins 1 caractère\n")
         with open("../files/prop_corrections.txt", "a") as cor:
-            cor.write(correction + '\n' + str(contenu["chemin de la recherche"][1:]) + '\n')
+            chemin = contenu["chemin de la recherche"][0]
+            for elm in contenu["chemin de la recherche"][1:]:
+                chemin += "//" + str(elm)
+            cor.write(correction + '\n' + chemin + '\n')
         
         continuer = input("\nVotre proposition de correction a bien été enregistrée.\nAppuyez sur entrer pour continuer.")

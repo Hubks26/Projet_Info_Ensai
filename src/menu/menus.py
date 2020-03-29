@@ -5,7 +5,7 @@ from acteurs.geographe import Geographe
 from acteurs.admin import Admin
 from menu.menu_ouvert import Ouvert
 
-def connection(contenu):
+def connexion(contenu):
     
     menu_acteur = contenu
     
@@ -40,10 +40,9 @@ def ajouter_ou_supprimer_compte(contenu):
         return Ouvert(menu_choix_ajouter_supprimer)
     
     else:
-            print("\nVEUILLEZ D'ABORD VOUS CONNECTER.")
-            continuer = input("Appuyez sur entrer pour continuer.")
-    
-    return Ouvert(contenu)
+        print("\nVEUILLEZ D'ABORD VOUS CONNECTER.")
+        continuer = input("Appuyez sur entrer pour continuer.")
+        return Ouvert(contenu)
 
 
 # FONCTION TEMPORAIRE ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -97,10 +96,10 @@ menus = [
     ],
     "actions" : 
     [
-        connection,
-        (lambda contenu : contenu["individu"].afficher_pays(contenu)),
+        connexion,
+        (lambda contenu : contenu["individu"].afficher_pays(contenu)), # C'est pour ça que le système de connexion marche ici.
         temporaire_function,
-        temporaire_function,
+        (lambda contenu : contenu["individu"].gestion_corrections(contenu)),
         ajouter_ou_supprimer_compte,
         (lambda contenu : Ouvert(menus[0])),
         Individu().quitter

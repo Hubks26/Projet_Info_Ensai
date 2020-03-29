@@ -28,6 +28,7 @@ class Geographe(Individu):
         for i in range(len(liste_des_statuts)):
             if self.statut == liste_des_statuts[i] and pseudo == liste_des_pseudos[i] and mot_de_passe == liste_des_mots_de_passe[i]:
                 self.est_connecte = True
+                print(self.est_connecte)
                 print("\nVous êtes connecté !")
                 continuer = input("Appuyez sur entrer pour continuer.")
 
@@ -41,7 +42,11 @@ class Geographe(Individu):
         if not self.est_connecte:
             continuer = input("\nVEUILLEZ D'ABORD VOUS CONNECTER.\nAppuyez sur entrer pour continuer.")
         else:
-            modification = input("\nEntrez le nouveau texte :\n> ")
+            while True:
+                modification = input("\nEntrez le nouveau texte :\n> ")
+                if len(modification) > 1:
+                    break
+                print("\nVotre texte doit contenir au moins 1 caractère\n")
             with open(directory_data + filename) as json_file:
                 donnees = json.load(json_file)
             chemin = contenu["chemin de la recherche"][1:]
@@ -65,7 +70,11 @@ class Geographe(Individu):
         else:
             choix = input("\nVoulez vous ajouter une Section ou un Texte ? (S/T) ?\nAppuyez sur une autre touche si vous voulez ne rien modifier.\n> ")
             if choix in ["s", "S"]:
-                nouvelle_section = input("\nEntrez le nom de la nouvelle section :\n> ")
+                while True:
+                    nouvelle_section = input("\nEntrez le nom de la nouvelle section :\n> ")
+                    if len(nouvelle_section) > 1 and len(nouvelle_section) <= 50 and "//" not in nouvelle_section:
+                        break
+                    print("\nLe nom de la section doit contenir entre 1 et 50 caractères.\nL'usage de // dans un nom de section est interdit\n")
                 with open(directory_data + filename) as json_file:
                     donnees = json.load(json_file)
                 chemin = contenu["chemin de la recherche"][1:]
@@ -150,3 +159,43 @@ class Geographe(Individu):
             else:
                 continuer = input("\nCe pays existe déjà !\nAppuyez sur entrer pour continuer.")
                 return Ouvert(contenu_precedent)
+            
+    def gestion_corrections(self, contenu):
+        if not self.est_connecte:
+            continuer = input("\nVEUILLEZ D'ABORD VOUS CONNECTER.\nAppuyez sur entrer pour continuer.")
+            return Ouvert(contenu)
+        
+        with open("../files/prop_corrections.txt","r") as fichier:
+            tampon1 = fichier.readlines()
+        props_et_chemins = []
+        for elm in tampon1:
+            props_et_chemins.append(elm[:-1])
+        n = len(props_et_chemins)
+        propositions = [props_et_chemins[i] for i in range(0,n,2)]
+        chemins = [props_et_chemins[i].split("//") for i in range(1,n,2)]
+        options = []
+        for chemin in chemins:
+            tampon2 = ""
+            for i in range(len(chemin)):
+                if i != 1:
+                    tampon2 += chemin[i] + "/"
+            options.append(tampon2)
+        options.sort()
+        print(options)
+        
+        choix_prop = {}
+        choix_prop["question"] = "Choisissez une proposition de correction.\nLe chemin indiqué est celui de l'emplacement du texte suceptible d'être modifié."
+        choix_prop["individu"] = contenu["individu"]
+        choix_prop["chemin de la recherche"] = []
+        choix_prop["options"] = options
+        choix_prop["actions"] = []
+        for i in range(len(options)):
+            choix_prop["actions"].append(lambda var : Ouvert(contenu))
+        
+        choix_prop["options"].append("RETOUR AU MENU DE L'ACTEUR")
+        choix_prop["actions"].append(lambda var : Ouvert(contenu))
+        choix_prop["options"].append("QUITTER")
+        choix_prop["actions"].append(Individu().quitter)
+        
+        return Ouvert(choix_prop)
+            
