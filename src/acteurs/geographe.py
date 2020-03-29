@@ -165,6 +165,9 @@ class Geographe(Individu):
             continuer = input("\nVEUILLEZ D'ABORD VOUS CONNECTER.\nAppuyez sur entrer pour continuer.")
             return Ouvert(contenu)
         
+        if self.contenu_du_menu_initial == {}:
+            self.contenu_du_menu_initial = contenu
+        
         with open("../files/prop_corrections.txt","r") as fichier:
             tampon1 = fichier.readlines()
         props_et_chemins = []
@@ -181,21 +184,27 @@ class Geographe(Individu):
                     tampon2 += chemin[i] + "/"
             options.append(tampon2)
         options.sort()
-        print(options)
         
         choix_prop = {}
-        choix_prop["question"] = "Choisissez une proposition de correction.\nLe chemin indiqué est celui de l'emplacement du texte suceptible d'être modifié."
+        
+        if len(options) == 0:
+            choix_prop["question"] = "Il n'y a pas de propositions à examiner."
+        else:
+            choix_prop["question"] = "Choisissez une proposition de correction.\nLe chemin indiqué est celui de l'emplacement du texte suceptible d'être modifié."
         choix_prop["individu"] = contenu["individu"]
         choix_prop["chemin de la recherche"] = []
         choix_prop["options"] = options
         choix_prop["actions"] = []
         for i in range(len(options)):
-            choix_prop["actions"].append(lambda var : Ouvert(contenu))
+            choix_prop["actions"].append(self.decider_correction)
         
         choix_prop["options"].append("RETOUR AU MENU DE L'ACTEUR")
-        choix_prop["actions"].append(lambda var : Ouvert(contenu))
+        choix_prop["actions"].append(lambda var : Ouvert(self.contenu_du_menu_initial))
         choix_prop["options"].append("QUITTER")
         choix_prop["actions"].append(Individu().quitter)
         
         return Ouvert(choix_prop)
             
+    def decider_correction(self, contenu):
+        continuer = input("\nLa fonction permettant de décider de valider ou non une correction n'a pas encore été codée.\nAppuyez sur entrer pour continuer")
+        return self.gestion_corrections(contenu)
