@@ -53,8 +53,11 @@ class Individu:
                         self.proposer_correction(choix_section)
                     choix_section["chemin de la recherche"].pop()
                     return Ouvert(contenu)
-
-            choix_section["question"] = "Choisissez une option."
+            
+            if len(list(sections_dispo)) == 0:
+                choix_section["question"] = "Cette section est vide."
+            else :
+                choix_section["question"] = "Choisissez une option."
             choix_section["individu"] = contenu["individu"]
             choix_section["options"] = list(sections_dispo)
             choix_section["actions"] = []
@@ -64,7 +67,10 @@ class Individu:
                 choix_section["actions"].append((lambda contenu, tampon1=tampon1 : self.afficher_section(tampon1, contenu)))
                 
             if self.statut == "g" or self.statut == "a":
-                choix_section["options"].append("AJOUTER UNE SECTION OU UN TEXTE")
+                if len(list(sections_dispo)) == 0:
+                    choix_section["options"].append("AJOUTER UNE SECTION OU UN TEXTE")
+                else:
+                    choix_section["options"].append("AJOUTER UNE SECTION")
                 choix_section["actions"].append(lambda var : self.ajout_section(var, contenu))
             if self.statut == "a":
                 choix_section["options"].append("SUPPRIMER UNE SECTION")

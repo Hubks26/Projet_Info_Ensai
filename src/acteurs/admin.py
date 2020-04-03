@@ -21,7 +21,7 @@ class Admin(Geographe):
         liste_des_pseudos = [liste_des_comptes[i] for i in range(1, n, 3)]
         
         while True:
-            type_de_compte = input("\nQuel type de compte voulez vous créer (a/g/d) ? : ")
+            type_de_compte = input("\nVous voulez créer un compte Administrateur, Géographe ou Data Scientist (a/g/d) ? : ")
             if type_de_compte in ["a", "g", "d"]:
                 break
             print("\nLa réponse attendue doit être : a pour Admin, g pour Géographe ou d pour Data Scientist.")
@@ -62,7 +62,11 @@ class Admin(Geographe):
         
         if pseudo_a_supprimer not in liste_des_pseudos:
             continuer = input("\nCe compte n'existe pas.\nAppuyez sur entrer pour continuer.\n")
-        else :
+            return Ouvert(contenu)
+        
+        continuer = input("\nConfirmation de la suppression du compte (O/N) ?\n> ")
+        
+        if continuer in ["o","O"]:
             with open("../files/comptes.txt", "r") as comptes:
                 nouvelle_liste_des_comptes = []
                 indice = None
@@ -76,6 +80,8 @@ class Admin(Geographe):
                 for line in nouvelle_liste_des_comptes:
                     comptes.write(line+"\n")
             continuer = input("\nLe compte de {} a bien été supprimé.\nAppuyez sur entrer pour continuer.".format(pseudo_a_supprimer))
+        else :
+            continuer = input("\nLa tentative de suppression de compte n'a pas abouti\nAppuyez sur entrer pour continuer.\n")
         return Ouvert(contenu)
     
     def supprimer_section(self, contenu, contenu_precedent): # Il doit y avoir un moyen plus simple de faire cette fonction

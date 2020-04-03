@@ -67,19 +67,60 @@ class Geographe(Individu):
             continuer = input("\nVEUILLEZ D'ABORD VOUS CONNECTER.\nAppuyez sur entrer pour continuer.")
             return Ouvert(contenu)
         else:
-            choix = input("\nVoulez vous ajouter une Section ou un Texte ? (S/T) ?\nAppuyez sur une autre touche si vous voulez ne rien modifier.\n> ")
-            if choix in ["s", "S"]:
+            with open(directory_data + filename) as json_file:
+                donnees = json.load(json_file)
+            chemin = contenu["chemin de la recherche"][1:]
+            contenu_section = donnees[chemin[0]]
+            for section in chemin[1:]:
+                contenu_section = contenu_section[section]
+                
+            if len(contenu_section) == 0:
+                choix = input("\nVoulez vous ajouter une Section ou un Texte ? (S/T) ?\nAppuyez sur une autre touche si vous voulez ne rien modifier.\n> ")
+                if choix in ["s", "S"]:
+                    while True:
+                        nouvelle_section = input("\nEntrez le nom de la nouvelle section :\n> ")
+                        if len(nouvelle_section) > 1 and len(nouvelle_section) <= 50 and "//" not in nouvelle_section:
+                            break
+                        print("\nLe nom de la section doit contenir entre 1 et 50 caractères.\nL'usage de // dans un nom de section est interdit\n")
+                    if nouvelle_section in contenu_section.keys() or nouvelle_section in ["AJOUTER OU RENOMMER","RETOUR","QUITTER"]:
+                        continuer = input("\nCette section existe déjà !\nAppuyez sur entrer pour continuer.")
+                        return Ouvert(contenu)
+                    confirmation = input("\nConfirmation de la création de la section (O/N) ?\n> ")
+                    if confirmation in ["o","O"]:
+                        contenu_section[nouvelle_section] = {}
+                        with open(directory_data + filename, "w") as json_file:
+                            json.dump(donnees, json_file)
+                        continuer = input("\nVotre ajout a bien été enregistrée.\nAppuyez sur entrer pour continuer.")
+                    else :
+                        continuer = input("\nVotre tentative d'ajout n'a pas abouti.\nAppuyez sur entrer pour continuer.")
+                        return Ouvert(contenu)
+                    
+                    tampon = contenu["chemin de la recherche"].pop()
+                    if len(contenu["chemin de la recherche"]) == 1:
+                        contenu["chemin de la recherche"].pop()
+                    return self.afficher_section(tampon, contenu_precedent)
+                
+                elif choix in ["t", "T"]:
+                    nouveau_texte = input("\nEntrez le texte à ajouter :\n> ")
+                    confirmation = input("\nConfirmation de l'ajout du texte (O/N) ?\n> ")
+                    if confirmation in ["o","O"]:
+                        contenu_section["text"] = nouveau_texte
+                        with open(directory_data + filename, "w") as json_file:
+                            json.dump(donnees, json_file)
+                        continuer = input("\nVotre ajout a bien été enregistrée.\nAppuyez sur entrer pour continuer.")
+                        contenu["chemin de la recherche"].pop()
+                    tampon = contenu["chemin de la recherche"].pop()
+                    if len(contenu["chemin de la recherche"]) == 1:
+                        contenu["chemin de la recherche"].pop()
+                    return self.afficher_section(tampon, contenu_precedent)
+                else:
+                    return Ouvert(contenu)
+            else:
                 while True:
                     nouvelle_section = input("\nEntrez le nom de la nouvelle section :\n> ")
                     if len(nouvelle_section) > 1 and len(nouvelle_section) <= 50 and "//" not in nouvelle_section:
                         break
                     print("\nLe nom de la section doit contenir entre 1 et 50 caractères.\nL'usage de // dans un nom de section est interdit\n")
-                with open(directory_data + filename) as json_file:
-                    donnees = json.load(json_file)
-                chemin = contenu["chemin de la recherche"][1:]
-                contenu_section = donnees[chemin[0]]
-                for section in chemin[1:]:
-                    contenu_section = contenu_section[section]
                 if nouvelle_section in contenu_section.keys() or nouvelle_section in ["AJOUTER OU RENOMMER","RETOUR","QUITTER"]:
                     continuer = input("\nCette section existe déjà !\nAppuyez sur entrer pour continuer.")
                     return Ouvert(contenu)
@@ -97,33 +138,6 @@ class Geographe(Individu):
                 if len(contenu["chemin de la recherche"]) == 1:
                     contenu["chemin de la recherche"].pop()
                 return self.afficher_section(tampon, contenu_precedent)
-            
-            elif choix in ["t", "T"]:
-                with open(directory_data + filename) as json_file:
-                    donnees = json.load(json_file)
-                chemin = contenu["chemin de la recherche"][1:]
-                contenu_section = donnees[chemin[0]]
-                for section in chemin[1:]:
-                    contenu_section = contenu_section[section]
-                
-                if len(contenu_section) != 0:
-                    continuer = input("\nL'ajout d'un texte ne peut se faire que dans une section vide !\nAppuyez sur entrer pour continuer.")
-                    return Ouvert(contenu)
-                else:
-                    nouveau_texte = input("\nEntrez le texte à ajouter :\n> ")
-                    confirmation = input("\nConfirmation de l'ajout du texte (O/N) ?\n> ")
-                    if confirmation in ["o","O"]:
-                        contenu_section["text"] = nouveau_texte
-                        with open(directory_data + filename, "w") as json_file:
-                            json.dump(donnees, json_file)
-                        continuer = input("\nVotre ajout a bien été enregistrée.\nAppuyez sur entrer pour continuer.")
-                contenu["chemin de la recherche"].pop()
-                tampon = contenu["chemin de la recherche"].pop()
-                if len(contenu["chemin de la recherche"]) == 1:
-                    contenu["chemin de la recherche"].pop()
-                return self.afficher_section(tampon, contenu_precedent)
-            else:
-                return Ouvert(contenu)
             
     def ajout_pays(self, contenu, contenu_precedent): # Il doit y avoir un moyen plus simple de faire cette fonction.
         if not self.est_connecte:
