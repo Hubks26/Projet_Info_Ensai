@@ -41,7 +41,7 @@ def ajouter_ou_supprimer_compte(contenu):
     
     else:
         print("\nVEUILLEZ D'ABORD VOUS CONNECTER.")
-        continuer = input("Appuyez sur entrer pour continuer.")
+        input("Appuyez sur entrer pour continuer.")
         return Ouvert(contenu)
 
 
@@ -49,10 +49,10 @@ def ajouter_ou_supprimer_compte(contenu):
 def temporaire_function(contenu):                                                                                    #
     if not contenu["individu"].est_connecte:                                                                         #
         print("\nVEUILLEZ D'ABORD VOUS CONNECTER.")                                                                  #   
-        continuer = input("Appuyez sur entrer pour continuer.")                                                      #
+        input("Appuyez sur entrer pour continuer.")                                                                  #
     else:                                                                                                            #
         print("\nCette fonctionnalité n'a pas encore été codée...")                                                  #   
-        continuer = input("Appuyez sur entrer pour continuer.")                                                      #  
+        input("Appuyez sur entrer pour continuer.")                                                                  #  
     return Ouvert(contenu)                                                                                           #
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
