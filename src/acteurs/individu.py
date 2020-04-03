@@ -10,8 +10,8 @@ class Individu:
         self.contenu_du_menu_initial = {}
     
     def quitter(self, contenu):
-        continuer = input("Voulez-vous vraiment quitter (O/N) ? ")
-        if continuer in ['o', 'O']:
+        confirmation = input("\nVoulez-vous vraiment quitter (O/N) ? ")
+        if confirmation in ['o', 'O']:
             return Ferme()
         else:
             return Ouvert(contenu)

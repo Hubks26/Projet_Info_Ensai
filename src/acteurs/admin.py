@@ -46,7 +46,7 @@ class Admin(Geographe):
             comptes.write("{}\n".format(type_de_compte))
             comptes.write("{}\n".format(pseudo))
             comptes.write("{}\n".format(mot_de_passe))
-            continuer = input("\nLe compte a bien été enregistré.\nAppuyez sur entrer pour continuer.\n")
+            input("\nLe compte a bien été enregistré.\nAppuyez sur entrer pour continuer.\n")
         return Ouvert(contenu)
     
     def supprimer_compte(self, contenu):
@@ -61,12 +61,12 @@ class Admin(Geographe):
         liste_des_pseudos = [liste_des_comptes[i] for i in range(1, n, 3)]
         
         if pseudo_a_supprimer not in liste_des_pseudos:
-            continuer = input("\nCe compte n'existe pas.\nAppuyez sur entrer pour continuer.\n")
+            input("\nCe compte n'existe pas.\nAppuyez sur entrer pour continuer.\n")
             return Ouvert(contenu)
         
-        continuer = input("\nConfirmation de la suppression du compte (O/N) ?\n> ")
+        confirmation = input("\nConfirmation de la suppression du compte (O/N) ?\n> ")
         
-        if continuer in ["o","O"]:
+        if confirmation in ["o","O"]:
             nouvelle_liste_des_comptes = []
             indice = None
             for line in liste_des_comptes:
@@ -78,14 +78,14 @@ class Admin(Geographe):
             with open("../files/comptes.txt", "w") as comptes:
                 for line in nouvelle_liste_des_comptes:
                     comptes.write(line+"\n")
-            continuer = input("\nLe compte de {} a bien été supprimé.\nAppuyez sur entrer pour continuer.".format(pseudo_a_supprimer))
+            input("\nLe compte de {} a bien été supprimé.\nAppuyez sur entrer pour continuer.".format(pseudo_a_supprimer))
         else :
-            continuer = input("\nLa tentative de suppression de compte n'a pas abouti\nAppuyez sur entrer pour continuer.\n")
+            input("\nLa tentative de suppression de compte n'a pas abouti\nAppuyez sur entrer pour continuer.\n")
         return Ouvert(contenu)
     
     def supprimer_section(self, contenu, contenu_precedent): # Il doit y avoir un moyen plus simple de faire cette fonction
         if not self.est_connecte:
-            continuer = input("\nVEUILLEZ D'ABORD VOUS CONNECTER.\nAppuyez sur entrer pour continuer.")
+            input("\nVEUILLEZ D'ABORD VOUS CONNECTER.\nAppuyez sur entrer pour continuer.")
             return Ouvert(contenu)
         section_a_supprimer = input("\nVeuillez entrer le nom de la section à supprimer : ")
         with open(directory_data + filename) as json_file:
@@ -102,15 +102,15 @@ class Admin(Geographe):
                     del contenu_section[section_a_supprimer]
                     with open(directory_data + filename, "w") as json_file:
                         json.dump(donnees, json_file)
-                    continuer = input("\nLa section a bien été supprimée.\nAppuyez sur entrer pour continuer.")
+                    input("\nLa section a bien été supprimée.\nAppuyez sur entrer pour continuer.")
                 else :
-                    continuer = input("\nVotre tentative de suppression n'a pas abouti.\nAppuyez sur entrer pour continuer.")
+                    input("\nVotre tentative de suppression n'a pas abouti.\nAppuyez sur entrer pour continuer.")
                     return Ouvert(contenu)
             else:
-                continuer = input("\nVous ne pouvez pas supprimer cette section car elle est suceptible de contenir le nom du pays.\nAppuyez sur entrer pour continuer.")
+                input("\nVous ne pouvez pas supprimer cette section car elle est suceptible de contenir le nom du pays.\nAppuyez sur entrer pour continuer.")
                 return Ouvert(contenu)
         else:
-            continuer = input("\nCette section n'existe pas.\nAppuyez sur entrer pour continuer.")
+            input("\nCette section n'existe pas.\nAppuyez sur entrer pour continuer.")
             return Ouvert(contenu)
         tampon = contenu["chemin de la recherche"].pop()
         if len(contenu["chemin de la recherche"]) == 1:
@@ -119,7 +119,7 @@ class Admin(Geographe):
     
     def supprimer_pays(self, contenu, contenu_precedent):
         if not self.est_connecte:
-            continuer = input("\nVEUILLEZ D'ABORD VOUS CONNECTER.\nAppuyez sur entrer pour continuer.")
+            input("\nVEUILLEZ D'ABORD VOUS CONNECTER.\nAppuyez sur entrer pour continuer.")
             return Ouvert(contenu_precedent)
         pays_a_supprimer = input("\nVeuillez entrer le nom du pays à supprimer : ")
         with open(directory_data + filename) as json_file:
@@ -140,10 +140,10 @@ class Admin(Geographe):
                         json.dump(donnees, json_file)
                     with open("../files/liste_pays_sans_nom.txt", "a") as liste:
                         liste.write("{}\n".format(num_pays))
-                    continuer = input("\nLe pays a bien été supprimée.\nAppuyez sur entrer pour continuer.")
+                    input("\nLe pays a bien été supprimée.\nAppuyez sur entrer pour continuer.")
                     return self.afficher_pays(contenu)
                 else :
-                    continuer = input("\nVotre tentative de suppression n'a pas abouti.\nAppuyez sur entrer pour continuer.")
+                    input("\nVotre tentative de suppression n'a pas abouti.\nAppuyez sur entrer pour continuer.")
                     return Ouvert(contenu_precedent)
-        continuer = input("\nCe pays n'est pas dans la liste.\nAppuyez sur entrer pour continuer.")
+        input("\nCe pays n'est pas dans la liste.\nAppuyez sur entrer pour continuer.")
         return Ouvert(contenu_precedent)
