@@ -67,15 +67,14 @@ class Admin(Geographe):
         continuer = input("\nConfirmation de la suppression du compte (O/N) ?\n> ")
         
         if continuer in ["o","O"]:
-            with open("../files/comptes.txt", "r") as comptes:
-                nouvelle_liste_des_comptes = []
-                indice = None
-                for line in liste_des_comptes:
-                    if line == pseudo_a_supprimer:
-                        indice = liste_des_comptes.index(line)
-                for i in range(len(liste_des_comptes)):
-                    if i not in [indice-1,indice,indice+1]:
-                        nouvelle_liste_des_comptes.append(liste_des_comptes[i])
+            nouvelle_liste_des_comptes = []
+            indice = None
+            for line in liste_des_comptes:
+                if line == pseudo_a_supprimer:
+                    indice = liste_des_comptes.index(line)
+            for i in range(len(liste_des_comptes)):
+                if i not in [indice-1,indice,indice+1]:
+                    nouvelle_liste_des_comptes.append(liste_des_comptes[i])
             with open("../files/comptes.txt", "w") as comptes:
                 for line in nouvelle_liste_des_comptes:
                     comptes.write(line+"\n")

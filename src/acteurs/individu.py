@@ -122,7 +122,7 @@ class Individu:
                 if num_pays not in liste_pays_sans_nom:
                     choix_pays["options"].append(donnees[num_pays]['Government']['Country name']['conventional short form']['text'])
                     tampon1 = num_pays
-                    choix_pays["actions"].append((lambda var, tampon1=tampon1 : self.afficher_section(tampon1, contenu)))
+                    choix_pays["actions"].append(lambda var, tampon1=tampon1 : self.afficher_section(tampon1, contenu))
                     
             if self.statut == "g" or self.statut == "a":
                 choix_pays["options"].append("AJOUTER UN PAYS")

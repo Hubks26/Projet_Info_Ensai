@@ -29,17 +29,17 @@ class Geographe(Individu):
             if self.statut == liste_des_statuts[i] and pseudo == liste_des_pseudos[i] and mot_de_passe == liste_des_mots_de_passe[i]:
                 self.est_connecte = True
                 print("\nVous êtes connecté !")
-                continuer = input("Appuyez sur entrer pour continuer.")
+                input("Appuyez sur entrer pour continuer.")
 
         if not self.est_connecte:
             print("\nVotre connexion a échoué.")
-            continuer = input("Appuyez sur entrer pour continuer.")
+            input("Appuyez sur entrer pour continuer.")
             
         return self.est_connecte
     
     def modifier_texte(self, contenu):
         if not self.est_connecte:
-            continuer = input("\nVEUILLEZ D'ABORD VOUS CONNECTER.\nAppuyez sur entrer pour continuer.")
+            input("\nVEUILLEZ D'ABORD VOUS CONNECTER.\nAppuyez sur entrer pour continuer.")
         else:
             while True:
                 modification = input("\nEntrez le nouveau texte :\n> ")
@@ -58,13 +58,13 @@ class Geographe(Individu):
                 contenu_section["text"] = modification # Ici on modifie bien la variable donnees
                 with open(directory_data + filename, "w") as json_file:
                     json.dump(donnees, json_file)
-                continuer = input("\nVotre modification a bien été enregistrée.\nAppuyez sur entrer pour continuer.")
+                input("\nVotre modification a bien été enregistrée.\nAppuyez sur entrer pour continuer.")
             else :
-                continuer = input("\nVotre tentative de modification n'a pas abouti.\nAppuyez sur entrer pour continuer.")
+                input("\nVotre tentative de modification n'a pas abouti.\nAppuyez sur entrer pour continuer.")
                 
     def ajout_section(self, contenu, contenu_precedent): # Il doit y avoir un moyen plus simple de faire cette fonction
         if not self.est_connecte:
-            continuer = input("\nVEUILLEZ D'ABORD VOUS CONNECTER.\nAppuyez sur entrer pour continuer.")
+            input("\nVEUILLEZ D'ABORD VOUS CONNECTER.\nAppuyez sur entrer pour continuer.")
             return Ouvert(contenu)
         else:
             with open(directory_data + filename) as json_file:
@@ -83,16 +83,16 @@ class Geographe(Individu):
                             break
                         print("\nLe nom de la section doit contenir entre 1 et 50 caractères.\nL'usage de // dans un nom de section est interdit\n")
                     if nouvelle_section in contenu_section.keys() or nouvelle_section in ["AJOUTER OU RENOMMER","RETOUR","QUITTER"]:
-                        continuer = input("\nCette section existe déjà !\nAppuyez sur entrer pour continuer.")
+                        input("\nCette section existe déjà !\nAppuyez sur entrer pour continuer.")
                         return Ouvert(contenu)
                     confirmation = input("\nConfirmation de la création de la section (O/N) ?\n> ")
                     if confirmation in ["o","O"]:
                         contenu_section[nouvelle_section] = {}
                         with open(directory_data + filename, "w") as json_file:
                             json.dump(donnees, json_file)
-                        continuer = input("\nVotre ajout a bien été enregistrée.\nAppuyez sur entrer pour continuer.")
+                        input("\nVotre ajout a bien été enregistrée.\nAppuyez sur entrer pour continuer.")
                     else :
-                        continuer = input("\nVotre tentative d'ajout n'a pas abouti.\nAppuyez sur entrer pour continuer.")
+                        input("\nVotre tentative d'ajout n'a pas abouti.\nAppuyez sur entrer pour continuer.")
                         return Ouvert(contenu)
                     
                     tampon = contenu["chemin de la recherche"].pop()
@@ -107,7 +107,7 @@ class Geographe(Individu):
                         contenu_section["text"] = nouveau_texte
                         with open(directory_data + filename, "w") as json_file:
                             json.dump(donnees, json_file)
-                        continuer = input("\nVotre ajout a bien été enregistrée.\nAppuyez sur entrer pour continuer.")
+                        input("\nVotre ajout a bien été enregistrée.\nAppuyez sur entrer pour continuer.")
                         contenu["chemin de la recherche"].pop()
                     tampon = contenu["chemin de la recherche"].pop()
                     if len(contenu["chemin de la recherche"]) == 1:
@@ -122,16 +122,16 @@ class Geographe(Individu):
                         break
                     print("\nLe nom de la section doit contenir entre 1 et 50 caractères.\nL'usage de // dans un nom de section est interdit\n")
                 if nouvelle_section in contenu_section.keys() or nouvelle_section in ["AJOUTER OU RENOMMER","RETOUR","QUITTER"]:
-                    continuer = input("\nCette section existe déjà !\nAppuyez sur entrer pour continuer.")
+                    input("\nCette section existe déjà !\nAppuyez sur entrer pour continuer.")
                     return Ouvert(contenu)
                 confirmation = input("\nConfirmation de la création de la section (O/N) ?\n> ")
                 if confirmation in ["o","O"]:
                     contenu_section[nouvelle_section] = {}
                     with open(directory_data + filename, "w") as json_file:
                         json.dump(donnees, json_file)
-                    continuer = input("\nVotre ajout a bien été enregistrée.\nAppuyez sur entrer pour continuer.")
+                    input("\nVotre ajout a bien été enregistrée.\nAppuyez sur entrer pour continuer.")
                 else :
-                    continuer = input("\nVotre tentative d'ajout n'a pas abouti.\nAppuyez sur entrer pour continuer.")
+                    input("\nVotre tentative d'ajout n'a pas abouti.\nAppuyez sur entrer pour continuer.")
                     return Ouvert(contenu)
                 
                 tampon = contenu["chemin de la recherche"].pop()
@@ -141,7 +141,7 @@ class Geographe(Individu):
             
     def ajout_pays(self, contenu, contenu_precedent): # Il doit y avoir un moyen plus simple de faire cette fonction.
         if not self.est_connecte:
-            continuer = input("\nVEUILLEZ D'ABORD VOUS CONNECTER.\nAppuyez sur entrer pour continuer.")
+            input("\nVEUILLEZ D'ABORD VOUS CONNECTER.\nAppuyez sur entrer pour continuer.")
             return Ouvert(contenu_precedent)
         else:
             nom_pays = input("\nEntrez le nom du pays à ajouter :\n> ")
@@ -164,18 +164,18 @@ class Geographe(Individu):
                     donnees.append({'Government' : {'Country name' : {'conventional short form' : {'text' : nom_pays}}}})
                     with open(directory_data + filename, "w") as json_file:
                         json.dump(donnees, json_file)
-                    continuer = input("\nVotre ajout a bien été enregistrée.\nAppuyez sur entrer pour continuer.")
+                    input("\nVotre ajout a bien été enregistrée.\nAppuyez sur entrer pour continuer.")
                     return self.afficher_pays(contenu)
                 else:
-                    continuer = input("\nVotre tentative d'ajout n'a pas abouti.\nAppuyez sur entrer pour continuer.")
+                    input("\nVotre tentative d'ajout n'a pas abouti.\nAppuyez sur entrer pour continuer.")
                     return Ouvert(contenu_precedent)
             else:
-                continuer = input("\nCe pays existe déjà !\nAppuyez sur entrer pour continuer.")
+                input("\nCe pays existe déjà !\nAppuyez sur entrer pour continuer.")
                 return Ouvert(contenu_precedent)
             
     def gestion_corrections(self, contenu):
         if not self.est_connecte:
-            continuer = input("\nVEUILLEZ D'ABORD VOUS CONNECTER.\nAppuyez sur entrer pour continuer.")
+            input("\nVEUILLEZ D'ABORD VOUS CONNECTER.\nAppuyez sur entrer pour continuer.")
             return Ouvert(contenu)
         
         if self.contenu_du_menu_initial == {}:
@@ -196,7 +196,6 @@ class Geographe(Individu):
                 if i != 1:
                     tampon2 += chemin[i] + "/"
             options.append(tampon2)
-        options.sort()
         
         choix_prop = {}
         
@@ -208,8 +207,9 @@ class Geographe(Individu):
         choix_prop["chemin de la recherche"] = []
         choix_prop["options"] = options
         choix_prop["actions"] = []
+        
         for i in range(len(options)):
-            choix_prop["actions"].append(self.decider_correction)
+            choix_prop["actions"].append(lambda var, i=i : self.decider_correction(contenu, propositions[i], chemins[i], props_et_chemins, i))
         
         choix_prop["options"].append("RETOUR AU MENU DE L'ACTEUR")
         choix_prop["actions"].append(lambda var : Ouvert(self.contenu_du_menu_initial))
@@ -218,6 +218,50 @@ class Geographe(Individu):
         
         return Ouvert(choix_prop)
             
-    def decider_correction(self, contenu):
-        continuer = input("\nLa fonction permettant de décider de valider ou non une correction n'a pas encore été codée.\nAppuyez sur entrer pour continuer")
+    def decider_correction(self, contenu, proposition, chemin, liste_des_propositions, num_proposition):
+        
+        with open(directory_data + filename) as json_file:
+            donnees = json.load(json_file)
+        section_du_texte = donnees[int(chemin[1])]
+        for section in chemin[2:]:
+            section_du_texte = section_du_texte[section]
+        print("\nTexte actuel :\n")
+        print(section_du_texte["text"] + "\n")
+        print("Proposition de correction :\n")
+        print(proposition + "\n")
+        while True:
+            validation = input("Voulez-vous valider cette proposition de correction (V : valider / R : refuser / P : aucune action) ?\n> ")
+            if validation in ["v","V","r","R","p","P"]:
+                break
+            else :
+                input("\nVotre réponse doit être V, R ou P.\nAppyez sur entrer pour continuer.\n")
+        if validation in ["v","V"]:
+            confirmation = input("\nConfirmation de la validation du nouveau texte (O/N) ? #Cela supprimera l'ancien texte#\n> ")
+            if confirmation in ["o","O"]:
+                section_du_texte["text"] = proposition
+                with open(directory_data + filename, "w") as json_file:
+                    json.dump(donnees, json_file)
+                nouvelle_liste_des_propositions = []
+                for i in range(len(liste_des_propositions)):
+                    if i not in [2*num_proposition, 2*num_proposition+1]:
+                        nouvelle_liste_des_propositions.append(liste_des_propositions[i])
+                with open("../files/prop_corrections.txt","w") as fichier:
+                    for line in nouvelle_liste_des_propositions:
+                        fichier.write(line+"\n")
+                input("\nLe texte a bien été modifié !\nAppuyez sur entrer pour continuer.")
+            else :
+                input("\nVotre tentative de validation n'a pas abouti.\nAppuyez sur entrer pour continuer.")
+        if validation in ["r","R"]:
+            confirmation = input("\nConfirmation du refus de la proposition (O/N) ? #Cela supprimera la proposition#\n> ")
+            if confirmation in ["o","O"]:
+                nouvelle_liste_des_propositions = []
+                for i in range(len(liste_des_propositions)):
+                    if i not in [2*num_proposition, 2*num_proposition+1]:
+                        nouvelle_liste_des_propositions.append(liste_des_propositions[i])
+                with open("../files/prop_corrections.txt","w") as fichier:
+                    for line in nouvelle_liste_des_propositions:
+                        fichier.write(line+"\n")
+                input("\nLa proposition a bien été supprimée\nAppuyez sur entrer pour continuer.")
+            else :
+                input("\nVotre tentative de refus n'a pas abouti.\nAppuyez sur entrer pour continuer.")
         return self.gestion_corrections(contenu)
