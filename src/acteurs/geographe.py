@@ -32,7 +32,7 @@ class Geographe(Individu):
                 input("Appuyez sur entrer pour continuer.")
 
         if not self.est_connecte:
-            print("\nVotre connexion a échoué.")
+            print("\nVotre connexion a échouée.")
             input("Appuyez sur entrer pour continuer.")
             
         return self.est_connecte
