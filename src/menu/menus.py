@@ -70,10 +70,10 @@ menus = [
     ],
     "actions" : 
     [
-        (lambda contenu : indices_taches_permises([1, 5, 6], Consultant())),
-        (lambda contenu : indices_taches_permises([0, 1, 2, 5, 6], Data_Scientist())),
-        (lambda contenu : indices_taches_permises([0, 1, 3, 5, 6], Geographe())),
-        (lambda contenu : indices_taches_permises([0, 1, 2, 3, 4, 5, 6], Admin())),
+        (lambda contenu : indices_taches_permises([1, 7, 8], Consultant())),
+        (lambda contenu : indices_taches_permises([0, 1, 2, 3, 4, 7, 8], Data_Scientist())),
+        (lambda contenu : indices_taches_permises([0, 1, 5, 7, 8], Geographe())),
+        (lambda contenu : indices_taches_permises([0, 1, 2, 3, 4, 5, 6, 7, 8], Admin())),
         Individu().quitter
     ],
     "individu" :
@@ -89,6 +89,8 @@ menus = [
         "Se connecter",
         "Afficher les données d'un pays",
         "Acceder aux résumés statistiques",
+        "Représentations graphiques",
+        "Recherche avancée",
         "Décider de valider ou de refuser une correction",
         "Créer ou supprimer un compte",
         "RETOUR AU MENU DE CHOIX DU STATUT",
@@ -98,6 +100,8 @@ menus = [
     [
         connexion,
         (lambda contenu : contenu["individu"].afficher_pays(contenu)), # C'est pour ça que le système de connexion marche ici.
+        temporaire_function,
+        temporaire_function,
         temporaire_function,
         (lambda contenu : contenu["individu"].gestion_corrections(contenu)),
         ajouter_ou_supprimer_compte,
