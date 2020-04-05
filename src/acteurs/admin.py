@@ -1,10 +1,11 @@
 from acteurs.geographe import Geographe
+from acteurs.data_scientist import Data_Scientist
 from menu.menu_ouvert import Ouvert
 import json
 filename = "data.json"
 directory_data = "../files/"
 
-class Admin(Geographe):
+class Admin(Geographe, Data_Scientist):
     def __init__(self):
         self.est_connecte = False
         self.statut = "a"

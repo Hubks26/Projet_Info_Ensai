@@ -100,8 +100,8 @@ menus = [
     [
         connexion,
         (lambda contenu : contenu["individu"].afficher_pays(contenu)), # C'est pour ça que le système de connexion marche ici.
-        temporaire_function,
-        temporaire_function,
+        (lambda contenu : contenu["individu"].resume_stat(contenu)),
+        (lambda contenu : contenu["individu"].representation_graphique(contenu)),
         temporaire_function,
         (lambda contenu : contenu["individu"].gestion_corrections(contenu)),
         ajouter_ou_supprimer_compte,

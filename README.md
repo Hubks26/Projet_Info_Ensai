@@ -12,10 +12,15 @@ ___
 
 ## Comment lancer l'application
 
-Ce programme fonctionne avec python 3.6.9 et nécessite la bibliothèque 	matplotlib.
+Ce programme fonctionne avec python 3.6.9 et nécessite les bibliothèques matplotlib et pandas.
+
 Pour installer matplotlib sur linux vous pouvez utiliser les commandes suivantes dans :
 sudo apt-get install python3-pip
 pip3 install matplotlib
+
+Pour installer matplotlib sur linux vous pouvez utiliser les commandes suivantes dans :
+sudo apt-get install python3-pip
+pip3 install pandas
 
 Executez le fichier main.py depuis le répertoire src : python3 main.py
 
