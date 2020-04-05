@@ -70,7 +70,7 @@ class Data_Scientist(Consultant):
         choix_representaion["actions"] = [(lambda var : Ouvert(var)), (lambda var : Ouvert(var)), (lambda var : Ouvert(self.contenu_du_menu_initial)), self.quitter]
         return Ouvert(choix_representaion)
     
-    def criteres_usuels(self, contenu, pays = [], add_pays = False):
+    def criteres_usuels(self, contenu, pays = [], add_pays = False, suppr_pays = False):
         
         def simplification_texte(txt):
             if not '++' in txt:
@@ -108,6 +108,12 @@ class Data_Scientist(Consultant):
                     
             return Ouvert(choix_pays)
         
+        if suppr_pays:
+            if len(pays) == 1:
+                input("\nIl doit y avoir au moins un pays dans la table.\nAppuyez sur entrer pour continuer.")
+            else :
+                input("\nCette partie du code n'est pas encore codée.\nAppuyez sur entrer pour continuer.")
+        
         menu_affichage = {}
         menu_affichage["individu"] = contenu["individu"]
         menu_affichage["chemin de la recherche"] = []
@@ -123,15 +129,12 @@ class Data_Scientist(Consultant):
                         [simplification_texte(donnees[num_pays]['People and Society']['Health expenditures']['text']) for num_pays in pays],
                         [simplification_texte(donnees[num_pays]['People and Society']['Education expenditures']['text']) for num_pays in pays],
                         [simplification_texte(donnees[num_pays]['Military and Security']['Military expenditures']['text']) for num_pays in pays]]
-        print(simplification_texte(donnees[7]['Military and Security']['Military expenditures']['text']))
-        print(valeurs_pays)
-        print(noms_pays)
+        
         menu_affichage["question"] = pandas.DataFrame(valeurs_pays, index = criteres, columns = noms_pays)
         
         menu_affichage["options"] = ["Ajouter un pays à la table", "Retirer un pays de la table", "RETOUR", "RETOUR AU MENU DE L'ACTEUR", "QUITTER"]
-        menu_affichage["actions"] = [(lambda var : self.criteres_usuels(var,pays,True)),(lambda var : Ouvert(var)), (lambda var : self.resume_stat(var)), (lambda var : Ouvert(self.contenu_du_menu_initial)), self.quitter]
-            
-        print("Vous avez choisi {}".format(pays[0]))
+        menu_affichage["actions"] = [(lambda var : self.criteres_usuels(var, pays, add_pays=True)),(lambda var : self.criteres_usuels(var, pays, suppr_pays=True)), (lambda var : self.resume_stat(var)), (lambda var : Ouvert(self.contenu_du_menu_initial)), self.quitter]
+        
         return Ouvert(menu_affichage)
         
         
