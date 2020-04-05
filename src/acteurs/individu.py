@@ -18,6 +18,8 @@ class Individu:
 
     def afficher_section(self, section, contenu):
         
+        self.contenu_du_menu_initial["chemin de la recherche"] = []
+        
         with open(directory_data + filename) as json_file:
             donnees = json.load(json_file)
         
@@ -35,9 +37,12 @@ class Individu:
                 sections_dispo = sections_dispo[sec]
             
             if "text" in list(sections_dispo):
+                chemin_a_afficher = contenu["chemin de la recherche"][0]
+                for section in chemin[1:]:
+                    chemin_a_afficher += " -> {}".format(section)
                 if self.statut == "g" or self.statut == "a":
                     print("\n")
-                    print("PAYS : {}\n".format(choix_section["chemin de la recherche"][0]))
+                    print("{} :\n".format(chemin_a_afficher))
                     print(sections_dispo["text"])
                     rep = input("\nVoulez vous modifier le texte (O/N) ?\n> ")
                     if rep in ["o","O"]:
@@ -46,7 +51,7 @@ class Individu:
                     return Ouvert(contenu)
                 else:
                     print("\n")
-                    print("PAYS : {}\n".format(choix_section["chemin de la recherche"][0]))
+                    print("{} :\n".format(chemin_a_afficher))
                     print(sections_dispo["text"])
                     rep = input("\nVoulez vous proposer une correction (O/N) ?\n> ")
                     if rep in ["o","O"]:

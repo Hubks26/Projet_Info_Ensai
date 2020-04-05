@@ -6,7 +6,11 @@ class Ouvert:
     def run(self):
         
         if len(self.contenu["chemin de la recherche"]) != 0:
-            print("{} : {}\n".format(self.contenu["chemin de la recherche"][0], self.contenu["question"]))
+            chemin = self.contenu["chemin de la recherche"][0]
+            if len(self.contenu["chemin de la recherche"]) > 2:
+                for section in self.contenu["chemin de la recherche"][2:]:
+                    chemin += " -> {}".format(section)
+            print("{} : {}\n".format(chemin, self.contenu["question"]))
         else : print("{}\n".format(self.contenu["question"]))
         
         options = self.contenu["options"]

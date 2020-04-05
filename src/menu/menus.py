@@ -34,7 +34,7 @@ def ajouter_ou_supprimer_compte(contenu):
     if menu_choix_ajouter_supprimer["individu"].est_connecte:
     
         menu_choix_ajouter_supprimer["question"] = "Voulez vous créer ou supprimer un compte ?"
-        menu_choix_ajouter_supprimer["options"] = ["Créer","Supprimer","Retour","QUITTER"]
+        menu_choix_ajouter_supprimer["options"] = ["Créer","Supprimer","RETOUR","QUITTER"]
         menu_choix_ajouter_supprimer["chemin de la recherche"] = contenu["chemin de la recherche"]
         menu_choix_ajouter_supprimer["actions"] = [(lambda contenu : contenu["individu"].creer_compte(contenu)), (lambda contenu : contenu["individu"].supprimer_compte(contenu)), (lambda var : Ouvert(contenu)), Individu().quitter]
         return Ouvert(menu_choix_ajouter_supprimer)
