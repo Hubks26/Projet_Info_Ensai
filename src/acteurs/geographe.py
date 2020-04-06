@@ -79,9 +79,13 @@ class Geographe(Individu):
                 if choix in ["s", "S"]:
                     while True:
                         nouvelle_section = input("\nEntrez le nom de la nouvelle section :\n> ")
-                        if len(nouvelle_section) > 1 and len(nouvelle_section) <= 50 and "//" not in nouvelle_section:
-                            break
-                        print("\nLe nom de la section doit contenir entre 1 et 50 caractères.\nL'usage de // dans un nom de section est interdit\n")
+                        if len(nouvelle_section) <= 1 or len(nouvelle_section) > 50 or "//" in nouvelle_section:
+                            print("\nLe nom de la section doit contenir entre 1 et 50 caractères.\nL'usage de // dans un nom de section est interdit")
+                            continue
+                        if (nouvelle_section == "Government") or (nouvelle_section == "Country name") or (nouvelle_section == "conventional short form") or (nouvelle_section == "conventional long form"):
+                            print("\nLa section ne peut pas porter de nom tel que Government, Country name, conventional short form ou conventional long form.")
+                            continue
+                        break
                     if nouvelle_section in contenu_section.keys() or nouvelle_section in ["AJOUTER OU RENOMMER","RETOUR","QUITTER"]:
                         input("\nCette section existe déjà !\nAppuyez sur entrer pour continuer.")
                         return Ouvert(contenu)
@@ -118,9 +122,13 @@ class Geographe(Individu):
             else:
                 while True:
                     nouvelle_section = input("\nEntrez le nom de la nouvelle section :\n> ")
-                    if len(nouvelle_section) > 1 and len(nouvelle_section) <= 50 and "//" not in nouvelle_section:
-                        break
-                    print("\nLe nom de la section doit contenir entre 1 et 50 caractères.\nL'usage de // dans un nom de section est interdit\n")
+                    if len(nouvelle_section) <= 1 or len(nouvelle_section) > 50 or "//" in nouvelle_section:
+                        print("\nLe nom de la section doit contenir entre 1 et 50 caractères.\nL'usage de // dans un nom de section est interdit")
+                        continue
+                    if (nouvelle_section == "Government") or (nouvelle_section == "Country name") or (nouvelle_section == "conventional short form") or (nouvelle_section == "conventional long form"):
+                        print("\nLa section ne peut pas porter de nom tel que Government, Country name, conventional short form ou conventional long form.")
+                        continue
+                    break
                 if nouvelle_section in contenu_section.keys() or nouvelle_section in ["AJOUTER OU RENOMMER","RETOUR","QUITTER"]:
                     input("\nCette section existe déjà !\nAppuyez sur entrer pour continuer.")
                     return Ouvert(contenu)
@@ -145,6 +153,11 @@ class Geographe(Individu):
             return Ouvert(contenu_precedent)
         else:
             nom_pays = input("\nEntrez le nom du pays à ajouter :\n> ")
+            
+            if nom_pays == 'none':
+                input("\nVous ne pouvez pas nommer un pays 'none'.\nAppyez sur entrer pour continuer.")
+                return Ouvert(contenu_precedent)
+            
             with open(directory_data + filename) as json_file:
                 donnees = json.load(json_file)
             liste_des_pays = []
@@ -161,7 +174,7 @@ class Geographe(Individu):
             if nom_pays not in liste_des_pays:
                 confirmation = input("\nConfirmation de l'ajout du pays (O/N) ?\n> ")
                 if confirmation in ["o","O"]:
-                    donnees.append({'Government' : {'Country name' : {'conventional short form' : {'text' : nom_pays}}}})
+                    donnees.append({'Government' : {'Country name' : {'conventional short form' : {'text' : nom_pays}, 'conventional long form' : {'text' : nom_pays}}}})
                     with open(directory_data + filename, "w") as json_file:
                         json.dump(donnees, json_file)
                     input("\nVotre ajout a bien été enregistrée.\nAppuyez sur entrer pour continuer.")

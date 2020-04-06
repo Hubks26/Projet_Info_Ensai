@@ -11,7 +11,7 @@ class Derouleur:
             print(asset.read())
 
     def aurevoir(self):
-        with open('../files/assets/error.txt', 'r', encoding="utf-8") as asset:
+        with open('../files/assets/a_plus.txt', 'r', encoding="utf-8") as asset:
             print(asset.read())
 
     def bordure(self):

@@ -27,7 +27,10 @@ class Individu:
             choix_section["chemin de la recherche"] = contenu["chemin de la recherche"]
             
             if isinstance(section, int):
-                choix_section["chemin de la recherche"].append(donnees[section]['Government']['Country name']['conventional short form']['text'])
+                nom_pays = donnees[section]['Government']['Country name']['conventional short form']['text']
+                if nom_pays == "none":
+                    nom_pays = donnees[section]['Government']['Country name']['conventional long form']['text']
+                choix_section["chemin de la recherche"].append(nom_pays)
                 
             choix_section["chemin de la recherche"].append(section)
             
@@ -44,7 +47,11 @@ class Individu:
                     print("\n")
                     print("{} :\n".format(chemin_a_afficher))
                     print(sections_dispo["text"])
-                    rep = input("\nVoulez vous modifier le texte (O/N) ?\n> ")
+                    rep = ""
+                    if chemin[-1] == "conventional short form":
+                        input("\nVous ne pouvez pas modifier le nom du pays.\nAppuyez sur entrer pour continuer.")
+                    else:
+                        rep = input("\nVoulez vous modifier le texte (O/N) ?\n> ")
                     if rep in ["o","O"]:
                         self.modifier_texte(choix_section)
                     choix_section["chemin de la recherche"].pop()
@@ -53,7 +60,11 @@ class Individu:
                     print("\n")
                     print("{} :\n".format(chemin_a_afficher))
                     print(sections_dispo["text"])
-                    rep = input("\nVoulez vous proposer une correction (O/N) ?\n> ")
+                    rep = ""
+                    if chemin[-1] == "conventional short form":
+                        input("\nVous ne pouvez pas proposer de correction pour le nom du pays.\nAppuyez sur entrer pour continuer.")
+                    else:
+                        rep = input("\nVoulez vous proposer une correction (O/N) ?\n> ")
                     if rep in ["o","O"]:
                         self.proposer_correction(choix_section)
                     choix_section["chemin de la recherche"].pop()
@@ -125,7 +136,10 @@ class Individu:
             
             for num_pays in range(len(donnees)):
                 if num_pays not in liste_pays_sans_nom:
-                    choix_pays["options"].append(donnees[num_pays]['Government']['Country name']['conventional short form']['text'])
+                    nom_pays = donnees[num_pays]['Government']['Country name']['conventional short form']['text']
+                    if nom_pays == "none":
+                        nom_pays = donnees[num_pays]['Government']['Country name']['conventional long form']['text']
+                    choix_pays["options"].append(nom_pays)
                     tampon1 = num_pays
                     choix_pays["actions"].append(lambda var, tampon1=tampon1 : self.afficher_section(tampon1, contenu))
                     

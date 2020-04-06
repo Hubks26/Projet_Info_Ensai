@@ -96,7 +96,7 @@ class Admin(Geographe, Data_Scientist):
         for section in chemin[1:]:
             contenu_section = contenu_section[section]
         if section_a_supprimer in contenu_section.keys():
-            suppression_possible = not((section_a_supprimer == "Government" and len(chemin) == 1) or (section_a_supprimer == "Country name") or (section_a_supprimer == "conventional short form"))
+            suppression_possible = not((section_a_supprimer == "Government") or (section_a_supprimer == "Country name") or (section_a_supprimer == "conventional short form") or (section_a_supprimer == "conventional long form"))
             if suppression_possible:
                 confirmation = input("\nConfirmation de la suppression de la section (O/N) ? #Cela supprimera aussi toutes ses sous-sections#\n> ")
                 if confirmation in ["o","O"]:
@@ -123,9 +123,14 @@ class Admin(Geographe, Data_Scientist):
             input("\nVEUILLEZ D'ABORD VOUS CONNECTER.\nAppuyez sur entrer pour continuer.")
             return Ouvert(contenu_precedent)
         pays_a_supprimer = input("\nVeuillez entrer le nom du pays à supprimer : ")
+        
+        if pays_a_supprimer == "none":
+            input("\nCe pays n'est pas dans la liste.\nAppuyez sur entrer pour continuer.")
+            return Ouvert(contenu_precedent)
+        
         with open(directory_data + filename) as json_file:
             donnees = json.load(json_file)
-        
+            
         with open("../files/liste_pays_sans_nom.txt", "r") as liste:
             liste_pays_sans_nom0 = liste.readlines()
         liste_pays_sans_nom = []
@@ -133,18 +138,19 @@ class Admin(Geographe, Data_Scientist):
             liste_pays_sans_nom.append(int(elm[:-1]))
             
         for num_pays in range(len(donnees)):
-            if num_pays not in liste_pays_sans_nom and pays_a_supprimer == donnees[num_pays]['Government']['Country name']['conventional short form']['text']:
-                confirmation = input("\nConfirmation de la suppression du pays (O/N) ? #Cela est irréverssible#\n> ")
-                if confirmation in ["o","O"]:
-                    donnees[num_pays] = {}
-                    with open(directory_data + filename, "w") as json_file:
-                        json.dump(donnees, json_file)
-                    with open("../files/liste_pays_sans_nom.txt", "a") as liste:
-                        liste.write("{}\n".format(num_pays))
-                    input("\nLe pays a bien été supprimée.\nAppuyez sur entrer pour continuer.")
-                    return self.afficher_pays(contenu)
-                else :
-                    input("\nVotre tentative de suppression n'a pas abouti.\nAppuyez sur entrer pour continuer.")
-                    return Ouvert(contenu_precedent)
+            if num_pays not in liste_pays_sans_nom:
+                if pays_a_supprimer == donnees[num_pays]['Government']['Country name']['conventional short form']['text'] or (donnees[num_pays]['Government']['Country name']['conventional short form']['text'] == "none" and pays_a_supprimer == donnees[num_pays]['Government']['Country name']['conventional long form']['text']):
+                    confirmation = input("\nConfirmation de la suppression du pays (O/N) ? #Cela est irréverssible#\n> ")
+                    if confirmation in ["o","O"]:
+                        donnees[num_pays] = {}
+                        with open(directory_data + filename, "w") as json_file:
+                            json.dump(donnees, json_file)
+                        with open("../files/liste_pays_sans_nom.txt", "a") as liste:
+                            liste.write("{}\n".format(num_pays))
+                        input("\nLe pays a bien été supprimée.\nAppuyez sur entrer pour continuer.")
+                        return self.afficher_pays(contenu)
+                    else :
+                        input("\nVotre tentative de suppression n'a pas abouti.\nAppuyez sur entrer pour continuer.")
+                        return Ouvert(contenu_precedent)
         input("\nCe pays n'est pas dans la liste.\nAppuyez sur entrer pour continuer.")
         return Ouvert(contenu_precedent)

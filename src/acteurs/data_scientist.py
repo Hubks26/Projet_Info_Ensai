@@ -121,14 +121,18 @@ class Data_Scientist(Consultant):
                     txt = donnees[num_pays]['Military and Security']['Military expenditures']['text']
                 except KeyError:
                     txt = 'NA'
-            
-            if not '++' in txt:
-                return txt
-            indice = 0
+            elif option == 9:
+                txt = donnees[num_pays]['Government']['Country name']['conventional short form']['text']
+                if txt == 'none':
+                    txt = donnees[num_pays]['Government']['Country name']['conventional long form']['text']
+
             for i in range(len(txt)):
                 if txt[i] == '+':
                     if txt[i+1] == '+':
                         return txt[:i-1]
+                if txt[i] == ";":
+                    return txt[:i]
+            return txt
         
         if len(pays) == 0 or add_pays:
             with open("../files/liste_pays_sans_nom.txt", "r") as liste:
@@ -150,13 +154,15 @@ class Data_Scientist(Consultant):
                 
             for num_pays in range(len(donnees)):
                 if num_pays not in liste_pays_sans_nom and num_pays not in pays:
-                    nom_pays = donnees[num_pays]['Government']['Country name']['conventional short form']['text']
+                    nom_pays = simplification_texte(num_pays, 9)
                     choix_pays["options"].append(nom_pays)
                     choix_pays["actions"].append(lambda var, num_pays=num_pays : self.criteres_usuels(contenu, pays+[num_pays]))
                     
             return Ouvert(choix_pays)
         
-        noms_pays = [donnees[num_pays]['Government']['Country name']['conventional short form']['text'] for num_pays in pays]
+        noms_pays = []
+        for num_pays in pays:
+            noms_pays.append(simplification_texte(num_pays,9))
         
         if suppr_pays:
             if len(pays) == 1:
