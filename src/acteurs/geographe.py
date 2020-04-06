@@ -147,7 +147,7 @@ class Geographe(Individu):
                     contenu["chemin de la recherche"].pop()
                 return self.afficher_section(tampon, contenu_precedent)
             
-    def ajout_pays(self, contenu, contenu_precedent): # Il doit y avoir un moyen plus simple de faire cette fonction.
+    def ajout_pays(self, contenu, contenu_precedent): # Il doit y avoir un moyen plus simple de faire cette fonction. / À Améliorer
         if not self.est_connecte:
             input("\nVEUILLEZ D'ABORD VOUS CONNECTER.\nAppuyez sur entrer pour continuer.")
             return Ouvert(contenu_precedent)
@@ -175,12 +175,66 @@ class Geographe(Individu):
                 confirmation = input("\nConfirmation de l'ajout du pays (O/N) ?\n> ")
                 if confirmation in ["o","O"]:
                     donnees.append({'Government' : {'Country name' : {'conventional short form' : {'text' : nom_pays}, 'conventional long form' : {'text' : nom_pays}}}})
+                    ajout_info = input("\nVoulez vous ajouter des informations de base sur le pays (O/N) ?\n> ")
+                    if ajout_info in ["o","O"]:
+                        superficie = input("\nEntrez la superficie du pays.\nVous pouvez taper 'pass' pour passer la question.\n> ")
+                        if superficie != "pass":
+                            donnees[-1]['Geography'] = {'Area' : {'total' : {'text' : superficie}}}
+                            input("\nVotre réponse a bien été enregistrée")
+                        population = input("\nEntrez la population du pays.\nVous pouvez taper 'pass' pour passer la question.\n> ")
+                        if population != "pass":
+                            donnees[-1]['People and Society'] = {'Population' : {'text' : population}}
+                            input("\nVotre réponse a bien été enregistrée")
+                        croissance_dem = input("\nEntrez le taux de croissance démographique du pays.\nVous pouvez taper 'pass' pour passer la question.\n> ")
+                        if croissance_dem != "pass":
+                            if 'People and Society' in donnees[-1]:
+                                donnees[-1]['People and Society']['Population growth rate'] = {'text' : croissance_dem}
+                            else:
+                                donnees[-1]['People and Society'] = {'Population growth rate' : {'text' : croissance_dem}}
+                            input("\nVotre réponse a bien été enregistrée")
+                        inflation = input("\nEntrez le taux d'inflation du pays.\nVous pouvez taper 'pass' pour passer la question.\n> ")
+                        if inflation != "pass":
+                            donnees[-1]['Economy'] = {'Inflation rate (consumer prices)' : {'text' : inflation}}
+                            input("\nVotre réponse a bien été enregistrée")
+                        dette = input("\nEntrez la dette du pays.\nVous pouvez taper 'pass' pour passer la question.\n> ")
+                        if dette != "pass":
+                            if 'Economy' in donnees[-1]:
+                                donnees[-1]['Economy']['Debt - external'] = {'text' : dette}
+                            else:
+                                donnees[-1]['Economy'] = {'Debt - external' : {'text' : dette}}
+                            input("\nVotre réponse a bien été enregistrée")
+                        chomage = input("\nEntrez le taux de chômage du pays.\nVous pouvez taper 'pass' pour passer la question.\n> ")
+                        if chomage != "pass":
+                            if 'Economy' in donnees[-1]:
+                                donnees[-1]['Economy']['Unemployment rate'] = {'text' : chomage}
+                            else:
+                                donnees[-1]['Economy'] = {'Unemployment rate' : {'text' : chomage}}
+                            input("\nVotre réponse a bien été enregistrée")
+                        dep_sante = input("\nEntrez le taux de dépense en santé du pays.\nVous pouvez taper 'pass' pour passer la question.\n> ")
+                        if dep_sante != "pass":
+                            if 'People and Society' in donnees[-1]:
+                                donnees[-1]['People and Society']['Health expenditures'] = {'text' : dep_sante}
+                            else:
+                                donnees[-1]['People and Society'] = {'Health expenditures' : {'text' : dep_sante}}
+                            input("\nVotre réponse a bien été enregistrée")
+                        dep_education = input("\nEntrez le taux de dépense en éducation du pays.\nVous pouvez taper 'pass' pour passer la question.\n> ")
+                        if dep_education != "pass":
+                            if 'People and Society' in donnees[-1]:
+                                donnees[-1]['People and Society']['Education expenditures'] = {'text' : dep_education}
+                            else:
+                                donnees[-1]['People and Society'] = {'Education expenditures' : {'text' : dep_education}}
+                            input("\nVotre réponse a bien été enregistrée")
+                        dep_militaires = input("\nEntrez le taux de dépense militaires du pays.\nVous pouvez taper 'pass' pour passer la question.\n> ")
+                        if dep_militaires != "pass":
+                            donnees[-1]['Military and Security'] = {'Military expenditures' : {'text' : dep_militaires}}
+                            input("\nVotre réponse a bien été enregistrée")
+                       
                     with open(directory_data + filename, "w") as json_file:
                         json.dump(donnees, json_file)
-                    input("\nVotre ajout a bien été enregistrée.\nAppuyez sur entrer pour continuer.")
+                    input("\nVotre nouveau pays a bien été enregistrée.\nAppuyez sur entrer pour continuer.")
                     return self.afficher_pays(contenu)
                 else:
-                    input("\nVotre tentative d'ajout n'a pas abouti.\nAppuyez sur entrer pour continuer.")
+                    input("\nVotre tentative d'ajout de pays n'a pas abouti.\nAppuyez sur entrer pour continuer.")
                     return Ouvert(contenu_precedent)
             else:
                 input("\nCe pays existe déjà !\nAppuyez sur entrer pour continuer.")
