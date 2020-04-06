@@ -20,7 +20,7 @@ sudo apt-get install python3-pip
 
 pip3 install matplotlib
 
-Pour installer matplotlib sur linux vous pouvez utiliser les commandes suivantes dans :
+Pour installer pandas sur linux vous pouvez utiliser les commandes suivantes dans :
 
 sudo apt-get install python3-pip
 
