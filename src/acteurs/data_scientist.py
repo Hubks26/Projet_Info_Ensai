@@ -71,8 +71,57 @@ class Data_Scientist(Consultant):
         return Ouvert(choix_representaion)
     
     def criteres_usuels(self, contenu, pays = [], add_pays = False, suppr_pays = False):
-        
-        def simplification_texte(txt):
+        self.contenu_du_menu_initial["chemin de la recherche"] = []
+        with open(directory_data + filename) as json_file:
+            donnees = json.load(json_file)
+            
+        def simplification_texte(num_pays,option):
+            if option == 0:
+                try:
+                    txt = donnees[num_pays]['Geography']['Area']['total']['text']
+                except KeyError:
+                    txt = 'NA'
+            elif option == 1:
+                try:
+                    txt = donnees[num_pays]['People and Society']['Population']['text' ]
+                except KeyError:
+                    txt = 'NA'
+            elif option == 2:
+                try:
+                    txt = donnees[num_pays]['People and Society']['Population growth rate']['text']
+                except KeyError:
+                    txt = 'NA'
+            elif option == 3:
+                try:
+                    txt = donnees[num_pays]['Economy']['Inflation rate (consumer prices)']['text']
+                except KeyError:
+                    txt = 'NA'    
+            elif option == 4:
+                try:
+                    txt = donnees[num_pays]['Economy']['Debt - external']['text']
+                except KeyError:
+                    txt = 'NA'
+            elif option == 5:
+                try:
+                    txt = donnees[num_pays]['Economy']['Unemployment rate']['text']
+                except KeyError:
+                    txt = 'NA'
+            elif option == 6:
+                try:
+                    txt = donnees[num_pays]['People and Society']['Health expenditures']['text']
+                except KeyError:
+                    txt = 'NA'
+            elif option == 7:
+                try:
+                    txt = donnees[num_pays]['People and Society']['Education expenditures']['text']
+                except KeyError:
+                    txt = 'NA'
+            elif option == 8:
+                try:
+                    txt = donnees[num_pays]['Military and Security']['Military expenditures']['text']
+                except KeyError:
+                    txt = 'NA'
+            
             if not '++' in txt:
                 return txt
             indice = 0
@@ -80,12 +129,7 @@ class Data_Scientist(Consultant):
                 if txt[i] == '+':
                     if txt[i+1] == '+':
                         return txt[:i-1]
-            
-                
         
-        self.contenu_du_menu_initial["chemin de la recherche"] = []
-        with open(directory_data + filename) as json_file:
-            donnees = json.load(json_file)
         if len(pays) == 0 or add_pays:
             choix_pays = {}
             choix_pays["question"] = "Choisissez un pays."
@@ -108,27 +152,38 @@ class Data_Scientist(Consultant):
                     
             return Ouvert(choix_pays)
         
+        noms_pays = [donnees[num_pays]['Government']['Country name']['conventional short form']['text'] for num_pays in pays]
+        
         if suppr_pays:
             if len(pays) == 1:
                 input("\nIl doit y avoir au moins un pays dans la table.\nAppuyez sur entrer pour continuer.")
             else :
-                input("\nCette partie du code n'est pas encore codée.\nAppuyez sur entrer pour continuer.")
+                choix_pays = {}
+                choix_pays["question"] = "Choisissez un pays à retirer de la table."
+                choix_pays["individu"] = contenu["individu"]
+                choix_pays["options"] = noms_pays
+                choix_pays["actions"] = []
+                for nom_pays in noms_pays:
+                    choix_pays["actions"].append(lambda var, nom_pays=nom_pays : self.criteres_usuels(contenu, pays[:noms_pays.index(nom_pays)]+pays[noms_pays.index(nom_pays)+1:]))
+
+                choix_pays["chemin de la recherche"] = []
+                return Ouvert(choix_pays)
         
         menu_affichage = {}
         menu_affichage["individu"] = contenu["individu"]
         menu_affichage["chemin de la recherche"] = []
         
-        noms_pays = [donnees[num_pays]['Government']['Country name']['conventional short form']['text'] for num_pays in pays]
         criteres = ["Superficie", "Population", "Croissance démographique", "Inflation", "Dette", "Taux de chômage", "Taux de dépenses en santé", "Taux de dépenses en éducation", "Taux de dépenses militaires"]
-        valeurs_pays = [[simplification_texte(donnees[num_pays]['Geography']['Area']['total']['text']) for num_pays in pays],
-                        [simplification_texte(donnees[num_pays]['People and Society']['Population']['text' ]) for num_pays in pays],
-                        [simplification_texte(donnees[num_pays]['People and Society']['Population growth rate']['text']) for num_pays in pays],
-                        [simplification_texte(donnees[num_pays]['Economy']['Inflation rate (consumer prices)']['text']) for num_pays in pays],
-                        [simplification_texte(donnees[num_pays]['Economy']['Debt - external']['text']) for num_pays in pays],
-                        [simplification_texte(donnees[num_pays]['Economy']['Unemployment rate']['text']) for num_pays in pays],
-                        [simplification_texte(donnees[num_pays]['People and Society']['Health expenditures']['text']) for num_pays in pays],
-                        [simplification_texte(donnees[num_pays]['People and Society']['Education expenditures']['text']) for num_pays in pays],
-                        [simplification_texte(donnees[num_pays]['Military and Security']['Military expenditures']['text']) for num_pays in pays]]
+        
+        valeurs_pays = [[simplification_texte(num_pays, 0) for num_pays in pays],
+                        [simplification_texte(num_pays, 1) for num_pays in pays],
+                        [simplification_texte(num_pays, 2) for num_pays in pays],
+                        [simplification_texte(num_pays, 3) for num_pays in pays],
+                        [simplification_texte(num_pays, 4) for num_pays in pays],
+                        [simplification_texte(num_pays, 5) for num_pays in pays],
+                        [simplification_texte(num_pays, 6) for num_pays in pays],
+                        [simplification_texte(num_pays, 7) for num_pays in pays],
+                        [simplification_texte(num_pays, 8) for num_pays in pays]]
         
         menu_affichage["question"] = pandas.DataFrame(valeurs_pays, index = criteres, columns = noms_pays)
         
@@ -136,5 +191,8 @@ class Data_Scientist(Consultant):
         menu_affichage["actions"] = [(lambda var : self.criteres_usuels(var, pays, add_pays=True)),(lambda var : self.criteres_usuels(var, pays, suppr_pays=True)), (lambda var : self.resume_stat(var)), (lambda var : Ouvert(self.contenu_du_menu_initial)), self.quitter]
         
         return Ouvert(menu_affichage)
+    
+    def top_flop(self,contenu):
+        pass
         
         
