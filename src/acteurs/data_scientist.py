@@ -131,21 +131,25 @@ class Data_Scientist(Consultant):
                         return txt[:i-1]
         
         if len(pays) == 0 or add_pays:
-            choix_pays = {}
-            choix_pays["question"] = "Choisissez un pays."
-            choix_pays["individu"] = contenu["individu"]
-            choix_pays["options"] = []
-            choix_pays["actions"] = []
-            choix_pays["chemin de la recherche"] = []
-            
             with open("../files/liste_pays_sans_nom.txt", "r") as liste:
                 liste_pays_sans_nom0 = liste.readlines()
             liste_pays_sans_nom = []
             for elm in liste_pays_sans_nom0:
                 liste_pays_sans_nom.append(int(elm[:-1]))
                 
+            if len(pays) >= 10 or len(pays) >= len(donnees)-len(liste_pays_sans_nom):
+                input("\nVous ne pouvez pas ajouter plus de pays à la table.\nAppuyez sur entrer pour continuer.")
+                return self.criteres_usuels(contenu, pays)
+            
+            choix_pays = {}
+            choix_pays["question"] = "Choisissez un pays."
+            choix_pays["individu"] = contenu["individu"]
+            choix_pays["options"] = []
+            choix_pays["actions"] = []
+            choix_pays["chemin de la recherche"] = []
+                
             for num_pays in range(len(donnees)):
-                if num_pays not in liste_pays_sans_nom:
+                if num_pays not in liste_pays_sans_nom and num_pays not in pays:
                     nom_pays = donnees[num_pays]['Government']['Country name']['conventional short form']['text']
                     choix_pays["options"].append(nom_pays)
                     choix_pays["actions"].append(lambda var, num_pays=num_pays : self.criteres_usuels(contenu, pays+[num_pays]))
