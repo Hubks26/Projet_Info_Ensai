@@ -51,7 +51,7 @@ class Data_Scientist(Consultant):
         choix_resume["individu"] = contenu["individu"]
         choix_resume["chemin de la recherche"] = []
         choix_resume["options"] = ["Afficher les critères usuels d'un ou plusieurs pays", "Afficher les premiers/derniers pays selon un certain critère", "Afficher les pays dont un critère dépasse un certain seuil", "Afficher le tableau des classes d'âge pour certains pays", "RETOUR AU MENU DE L'ACTEUR", "QUITTER"]
-        choix_resume["actions"] = [(lambda var : self.criteres_usuels(contenu)), (lambda var : Ouvert(var)), (lambda var : Ouvert(var)), (lambda var : Ouvert(var)), (lambda var : Ouvert(self.contenu_du_menu_initial)), self.quitter]
+        choix_resume["actions"] = [(lambda var : self.criteres_usuels(contenu)), (lambda var : self.top_flop(contenu)), (lambda var : Ouvert(var)), (lambda var : Ouvert(var)), (lambda var : Ouvert(self.contenu_du_menu_initial)), self.quitter]
         return Ouvert(choix_resume)
     
     def representation_graphique(self, contenu):
@@ -69,6 +69,8 @@ class Data_Scientist(Consultant):
         choix_representaion["options"] = ["Diagramme en barres", "Boîte à moustache", "RETOUR AU MENU DE L'ACTEUR", "QUITTER"]
         choix_representaion["actions"] = [(lambda var : Ouvert(var)), (lambda var : Ouvert(var)), (lambda var : Ouvert(self.contenu_du_menu_initial)), self.quitter]
         return Ouvert(choix_representaion)
+    
+    #A PARTIR DE LÀ LES FONCTIONS SONT DEGUEULASSES MAIS FONCTIONNENT, IL FAUT IMPERATIVEMENT LES REPRENDRE -> AINSI QUE RESOUDRE LES POTENTIELS BUGS ET FAILLES.
     
     def criteres_usuels(self, contenu, pays = [], add_pays = False, suppr_pays = False):
         self.contenu_du_menu_initial["chemin de la recherche"] = []
@@ -202,7 +204,254 @@ class Data_Scientist(Consultant):
         
         return Ouvert(menu_affichage)
     
-    def top_flop(self,contenu):
-        pass
+    def top_flop(self,contenu, critere=0): #Cette fonction est à réécrire en intégralité.
+        self.contenu_du_menu_initial["chemin de la recherche"] = []
+        with open(directory_data + filename) as json_file:
+            donnees = json.load(json_file)
         
+        def simplification_texte(num_pays,option):
+            if option == 0:
+                try:
+                    txt = donnees[num_pays]['Geography']['Area']['total']['text']
+                except KeyError:
+                    txt = 'NA'
+            elif option == 1:
+                try:
+                    txt = donnees[num_pays]['People and Society']['Population']['text']
+                except KeyError:
+                    txt = 'NA'
+            elif option == 2:
+                try:
+                    txt = donnees[num_pays]['People and Society']['Population growth rate']['text']
+                except KeyError:
+                    txt = 'NA'
+            elif option == 3:
+                try:
+                    txt = donnees[num_pays]['Economy']['Inflation rate (consumer prices)']['text']
+                except KeyError:
+                    txt = 'NA'    
+            elif option == 4:
+                try:
+                    txt = donnees[num_pays]['Economy']['Debt - external']['text']
+                except KeyError:
+                    txt = 'NA'
+            elif option == 5:
+                try:
+                    txt = donnees[num_pays]['Economy']['Unemployment rate']['text']
+                except KeyError:
+                    txt = 'NA'
+            elif option == 6:
+                try:
+                    txt = donnees[num_pays]['People and Society']['Health expenditures']['text']
+                except KeyError:
+                    txt = 'NA'
+            elif option == 7:
+                try:
+                    txt = donnees[num_pays]['People and Society']['Education expenditures']['text']
+                except KeyError:
+                    txt = 'NA'
+            elif option == 8:
+                try:
+                    txt = donnees[num_pays]['Military and Security']['Military expenditures']['text']
+                except KeyError:
+                    txt = 'NA'
+            elif option == 9:
+                txt = donnees[num_pays]['Government']['Country name']['conventional short form']['text']
+                if txt == 'none':
+                    txt = donnees[num_pays]['Government']['Country name']['conventional long form']['text']
+                for i in range(len(txt)):
+                    if txt[i] == '+':
+                        if txt[i+1] == '+':
+                            txt = txt[:i-1]
+                            break
+                    if txt[i] == ";" or txt[i] == "(":
+                        txt = txt[:i]
+                        break
+                return txt
+
+            for i in range(len(txt)):
+                if i > 30:
+                    txt = txt[:i]
+                    break
+                if txt[i] == '+':
+                    if txt[i+1] == '+':
+                        txt = txt[:i-1]
+                        break
+                if txt[i] == ";" or txt[i] == "(":
+                    txt = txt[:i]
+                    break
+                
+            if 'million' in txt:
+                txt = txt.replace('million', '*10**6')
+            if 'billion' in txt:
+                txt = txt.replace('billion', '*10**9')
+            if 'trillion' in txt:
+                txt = txt.replace('trillion', '*10**12')
+            lettres_a_supprimer = []
+            for i in range(len(txt)):
+                if i != 0 and txt[i] == '.' and txt[i-1] not in ["0","1","2","3","4","5","6","7","8","9","-",".","*"]:
+                    lettres_a_supprimer.append(txt[i])
+                if txt[i] not in ["0","1","2","3","4","5","6","7","8","9","-",".","*"]:
+                    lettres_a_supprimer.append(txt[i])
+            for lettre in lettres_a_supprimer:
+                txt = txt.replace(lettre,"")
+                
+            if len(txt) == 0 or txt[-1] == '-' :
+                return "NA"
+                
+            new_value = eval(txt)
+            
+            return new_value
         
+        if not critere:
+            choix_critere = {}
+            choix_critere["question"] = "Choisissez un critère."
+            choix_critere["individu"] = contenu["individu"]
+            choix_critere["chemin de la recherche"] = []
+            choix_critere["options"] = ["Superficie", "Population", "Croissance démographique", "Inflation", "Dette", "Taux de chômage", "Taux de dépenses en santé", "Taux de dépenses en éducation", "Taux de dépenses militaires"]
+            choix_critere["actions"] = [lambda var, i=i : self.top_flop(contenu, i) for i in range(1,10)]
+            choix_critere["options"].append("RETOUR")
+            choix_critere["actions"].append(lambda var : self.resume_stat(contenu))
+            choix_critere["options"].append("RETOUR AU MENU DE L'ACTEUR")
+            choix_critere["actions"].append(lambda var : Ouvert(self.contenu_du_menu_initial))
+            choix_critere["options"].append("QUITTER")
+            choix_critere["actions"].append(self.quitter)
+            return Ouvert(choix_critere)
+        
+        with open("../files/liste_pays_sans_nom.txt", "r") as liste:
+            liste_pays_sans_nom0 = liste.readlines()
+        liste_pays_sans_nom = []
+        for elm in liste_pays_sans_nom0:
+            liste_pays_sans_nom.append(int(elm[:-1]))
+        
+        liste_triee = []
+        for num_pays in range(len(donnees)):
+            if num_pays not in liste_pays_sans_nom:
+                if simplification_texte(num_pays,critere-1) != 'NA':
+                    liste_triee.append((simplification_texte(num_pays,critere-1), simplification_texte(num_pays,9), num_pays))
+        liste_triee.sort()
+        
+        top = []
+        flop = []
+        rang_top = range(1,11)
+        rang_flop = [len(liste_triee)-i for i in range(10)]
+        if critere == 1:
+            col = ['PAYS','SUPERFICIE']
+            
+            for i in range(10):
+                top.append([liste_triee[-i-1][1], donnees[liste_triee[-i-1][2]]['Geography']['Area']['total']['text']])
+            print("\nLes plus grands pays :\n")
+            print(pandas.DataFrame(top, index = rang_top, columns = col))
+            
+            for i in range(10):
+                flop.append([liste_triee[i][1], donnees[liste_triee[i][2]]['Geography']['Area']['total']['text']])
+            print("\n\nLes plus petits pays :\n")
+            print(pandas.DataFrame(flop, index = rang_flop, columns = col))
+            
+        if critere == 2:
+            col = ['PAYS','POPULATION']
+            
+            for i in range(10):
+                top.append([liste_triee[-i-1][1], donnees[liste_triee[-i-1][2]]['People and Society']['Population']['text']])
+            print("\nLes pays les plus peuplés :\n")
+            print(pandas.DataFrame(top, index = rang_top, columns = col))
+            
+            for i in range(10):
+                flop.append([liste_triee[i][1], donnees[liste_triee[i][2]]['People and Society']['Population']['text']])
+            print("\n\nLes pays les moins peuplés :\n")
+            print(pandas.DataFrame(flop, index = rang_flop, columns = col))
+            
+        if critere == 3:
+            col = ['PAYS','CROISSANCE DEMOGRAPHIQUE']
+            
+            for i in range(10):
+                top.append([liste_triee[-i-1][1], donnees[liste_triee[-i-1][2]]['People and Society']['Population growth rate']['text']])
+            print("\nLes pays avec la plus forte croissance démographique :\n")
+            print(pandas.DataFrame(top, index = rang_top, columns = col))
+            
+            for i in range(10):
+                flop.append([liste_triee[i][1], donnees[liste_triee[i][2]]['People and Society']['Population growth rate']['text']])
+            print("\n\nLes pays avec la plus faible croissance démographique :\n")
+            print(pandas.DataFrame(flop, index = rang_flop, columns = col))
+            
+        if critere == 4:
+            col = ['PAYS','INFLATION']
+            
+            for i in range(10):
+                top.append([liste_triee[-i-1][1], donnees[liste_triee[-i-1][2]]['Economy']['Inflation rate (consumer prices)']['text']])
+            print("\nLes pays avec la plus inflation :\n")
+            print(pandas.DataFrame(top, index = rang_top, columns = col))
+            
+            for i in range(10):
+                flop.append([liste_triee[i][1], donnees[liste_triee[i][2]]['Economy']['Inflation rate (consumer prices)']['text']])
+            print("\n\nLes pays avec la plus faible inflation :\n")
+            print(pandas.DataFrame(flop, index = rang_flop, columns = col))
+            
+        if critere == 5:
+            col = ['PAYS','DETTE']
+            
+            for i in range(10):
+                top.append([liste_triee[-i-1][1], donnees[liste_triee[-i-1][2]]['Economy']['Debt - external']['text']])
+            print("\nLes pays avec la plus grande dette :\n")
+            print(pandas.DataFrame(top, index = rang_top, columns = col))
+            
+            for i in range(10):
+                flop.append([liste_triee[i][1], donnees[liste_triee[i][2]]['Economy']['Debt - external']['text']])
+            print("\n\nLes pays avec la plus petite dette :\n")
+            print(pandas.DataFrame(flop, index = rang_flop, columns = col))
+            
+        if critere == 6:
+            col = ['PAYS','CHOMAGE']
+            
+            for i in range(10):
+                top.append([liste_triee[-i-1][1], donnees[liste_triee[-i-1][2]]['Economy']['Unemployment rate']['text']])
+            print("\nLes pays avec le plus fort taux de chômage :\n")
+            print(pandas.DataFrame(top, index = rang_top, columns = col))
+            
+            for i in range(10):
+                flop.append([liste_triee[i][1], donnees[liste_triee[i][2]]['Economy']['Unemployment rate']['text']])
+            print("\n\nLes pays avec le plus faible taux de chômage :\n")
+            print(pandas.DataFrame(flop, index = rang_flop, columns = col))
+            
+        if critere == 7:
+            col = ['PAYS','TAUX DE DEPENSES EN SANTE']
+            
+            for i in range(10):
+                top.append([liste_triee[-i-1][1], donnees[liste_triee[-i-1][2]]['People and Society']['Health expenditures']['text']])
+            print("\nLes pays avec le plus fort taux de dépenses en santé :\n")
+            print(pandas.DataFrame(top, index = rang_top, columns = col))
+            
+            for i in range(10):
+                flop.append([liste_triee[i][1], donnees[liste_triee[i][2]]['People and Society']['Health expenditures']['text']])
+            print("\n\nLes pays avec le plus faible taux de dépenses en santé :\n")
+            print(pandas.DataFrame(flop, index = rang_flop, columns = col))
+            
+        if critere == 8:
+            col = ['PAYS',"TAUX DE DEPENSES EN EDUCATION"]
+            
+            for i in range(10):
+                top.append([liste_triee[-i-1][1], donnees[liste_triee[-i-1][2]]['People and Society']['Education expenditures']['text']])
+            print("\nLes pays avec le plus fort taux de dépenses en éducation :\n")
+            print(pandas.DataFrame(top, index = rang_top, columns = col))
+            
+            for i in range(10):
+                flop.append([liste_triee[i][1], donnees[liste_triee[i][2]]['People and Society']['Education expenditures']['text']])
+            print("\n\nLes pays avec le plus faible taux de dépenses en éducation :\n")
+            print(pandas.DataFrame(flop, index = rang_flop, columns = col))
+            
+        if critere == 9:
+            col = ['PAYS','TAUX DE DEPENSES MILITAIRES']
+            
+            for i in range(10):
+                top.append([liste_triee[-i-1][1], donnees[liste_triee[-i-1][2]]['Military and Security']['Military expenditures']['text']])
+            print("\nLes pays avec le plus fort taux de dépenses militaires :\n")
+            print(pandas.DataFrame(top, index = rang_top, columns = col))
+            
+            for i in range(10):
+                flop.append([liste_triee[i][1], donnees[liste_triee[i][2]]['Military and Security']['Military expenditures']['text']])
+            print("\n\nLes pays avec le plus faible taux de dépenses militaires :\n")
+            print(pandas.DataFrame(flop, index = rang_flop, columns = col))
+            
+        input("\nAppuyez sur entrer pour continuer.")
+        
+        return self.top_flop(contenu)
