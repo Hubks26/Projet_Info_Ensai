@@ -1,5 +1,6 @@
 from acteurs.consultant import Consultant
 from menu.menu_ouvert import Ouvert
+import matplotlib.pyplot as plt
 import pandas
 import json
 filename = "data.json"
@@ -67,7 +68,7 @@ class Data_Scientist(Consultant):
         choix_representaion["individu"] = contenu["individu"]
         choix_representaion["chemin de la recherche"] = []
         choix_representaion["options"] = ["Diagramme en barres", "Boîte à moustache", "RETOUR AU MENU DE L'ACTEUR", "QUITTER"]
-        choix_representaion["actions"] = [(lambda var : Ouvert(var)), (lambda var : Ouvert(var)), (lambda var : Ouvert(self.contenu_du_menu_initial)), self.quitter]
+        choix_representaion["actions"] = [(lambda var : self.diag_barres(contenu)), (lambda var : self.box_plot(contenu)), (lambda var : Ouvert(self.contenu_du_menu_initial)), self.quitter]
         return Ouvert(choix_representaion)
     
     #A PARTIR DE LÀ LES FONCTIONS SONT DEGUEULASSES MAIS FONCTIONNENT, IL FAUT IMPERATIVEMENT LES REPRENDRE -> AINSI QUE RESOUDRE LES POTENTIELS BUGS ET FAILLES.
@@ -698,7 +699,7 @@ class Data_Scientist(Consultant):
                 txt = donnees[num_pays]['Government']['Country name']['conventional short form']['text']
                 if txt == 'none':
                     txt = donnees[num_pays]['Government']['Country name']['conventional long form']['text']
-            print(txt)
+                    
             for i in range(len(txt)):
                 if txt[i] == ";" or txt[i] == "(":
                     return txt[:i]
@@ -767,3 +768,242 @@ class Data_Scientist(Consultant):
         menu_affichage["actions"] = [(lambda var : self.classes_age(var, pays, add_pays=True)),(lambda var : self.classes_age(var, pays, suppr_pays=True)), (lambda var : self.resume_stat(var)), (lambda var : Ouvert(self.contenu_du_menu_initial)), self.quitter]
         
         return Ouvert(menu_affichage)
+
+    def diag_barres(self, contenu, critere=0):
+        self.contenu_du_menu_initial["chemin de la recherche"] = []
+        with open(directory_data + filename) as json_file:
+            donnees = json.load(json_file)
+        
+        def simplification_texte(num_pays,option):
+            if option == 0:
+                try:
+                    txt = donnees[num_pays]['Geography']['Area']['total']['text']
+                except KeyError:
+                    txt = 'NA'
+            elif option == 1:
+                try:
+                    txt = donnees[num_pays]['People and Society']['Population']['text']
+                except KeyError:
+                    txt = 'NA'
+            elif option == 2:
+                try:
+                    txt = donnees[num_pays]['People and Society']['Population growth rate']['text']
+                except KeyError:
+                    txt = 'NA'
+            elif option == 3:
+                try:
+                    txt = donnees[num_pays]['Economy']['Inflation rate (consumer prices)']['text']
+                except KeyError:
+                    txt = 'NA'    
+            elif option == 4:
+                try:
+                    txt = donnees[num_pays]['Economy']['Debt - external']['text']
+                except KeyError:
+                    txt = 'NA'
+            elif option == 5:
+                try:
+                    txt = donnees[num_pays]['Economy']['Unemployment rate']['text']
+                except KeyError:
+                    txt = 'NA'
+            elif option == 6:
+                try:
+                    txt = donnees[num_pays]['People and Society']['Health expenditures']['text']
+                except KeyError:
+                    txt = 'NA'
+            elif option == 7:
+                try:
+                    txt = donnees[num_pays]['People and Society']['Education expenditures']['text']
+                except KeyError:
+                    txt = 'NA'
+            elif option == 8:
+                try:
+                    txt = donnees[num_pays]['Military and Security']['Military expenditures']['text']
+                except KeyError:
+                    txt = 'NA'
+            elif option == 9:
+                txt = donnees[num_pays]['Government']['Country name']['conventional short form']['text']
+                if txt == 'none':
+                    txt = donnees[num_pays]['Government']['Country name']['conventional long form']['text']
+                for i in range(len(txt)):
+                    if txt[i] == '+':
+                        if txt[i+1] == '+':
+                            txt = txt[:i-1]
+                            break
+                    if txt[i] == ";" or txt[i] == "(":
+                        txt = txt[:i]
+                        break
+                return txt
+
+            for i in range(len(txt)):
+                if i > 30:
+                    txt = txt[:i]
+                    break
+                if txt[i] == '+':
+                    if txt[i+1] == '+':
+                        txt = txt[:i-1]
+                        break
+                if txt[i] == ";" or txt[i] == "(":
+                    txt = txt[:i]
+                    break
+                
+            if 'million' in txt:
+                txt = txt.replace('million', '*10**6')
+            if 'billion' in txt:
+                txt = txt.replace('billion', '*10**9')
+            if 'trillion' in txt:
+                txt = txt.replace('trillion', '*10**12')
+            lettres_a_supprimer = []
+            for i in range(len(txt)):
+                if i != 0 and txt[i] == '.' and txt[i-1] not in ["0","1","2","3","4","5","6","7","8","9","-",".","*"]:
+                    lettres_a_supprimer.append(txt[i])
+                if txt[i] not in ["0","1","2","3","4","5","6","7","8","9","-",".","*"]:
+                    lettres_a_supprimer.append(txt[i])
+            for lettre in lettres_a_supprimer:
+                txt = txt.replace(lettre,"")
+                
+            if len(txt) == 0 or txt[-1] == '-' :
+                return "NA"
+                
+            new_value = eval(txt)
+            
+            return new_value
+        
+        if not critere:
+            choix_critere = {}
+            choix_critere["question"] = "Choisissez un critère."
+            choix_critere["individu"] = contenu["individu"]
+            choix_critere["chemin de la recherche"] = []
+            choix_critere["options"] = ["Superficie", "Population", "Croissance démographique", "Inflation", "Dette", "Taux de chômage", "Taux de dépenses en santé", "Taux de dépenses en éducation", "Taux de dépenses militaires"]
+            choix_critere["actions"] = [lambda var, i=i : self.diag_barres(contenu, i) for i in range(1,10)]
+            choix_critere["options"].append("RETOUR")
+            choix_critere["actions"].append(lambda var : self.representation_graphique(contenu))
+            choix_critere["options"].append("RETOUR AU MENU DE L'ACTEUR")
+            choix_critere["actions"].append(lambda var : Ouvert(self.contenu_du_menu_initial))
+            choix_critere["options"].append("QUITTER")
+            choix_critere["actions"].append(self.quitter)
+            return Ouvert(choix_critere)
+        
+        with open("../files/liste_pays_sans_nom.txt", "r") as liste:
+            liste_pays_sans_nom0 = liste.readlines()
+        liste_pays_sans_nom = []
+        for elm in liste_pays_sans_nom0:
+            liste_pays_sans_nom.append(int(elm[:-1]))
+        
+        liste_triee = []
+        for num_pays in range(len(donnees)):
+            if num_pays not in liste_pays_sans_nom:
+                if simplification_texte(num_pays,critere-1) != 'NA':
+                    liste_triee.append(simplification_texte(num_pays,critere-1))
+        liste_triee.sort()
+        liste_triee.reverse()
+        x = range(len(liste_triee))
+        
+        input("\nAppuyez sur entrer pour afficher le diagramme.")
+        width = 0.7
+        plt.bar(x, liste_triee, width, color='b')
+        plt.show()
+        input("\nAppuyez sur entrer pour continuer.")
+        return self.diag_barres(contenu)
+    
+    def box_plot(self, contenu):
+        
+        self.contenu_du_menu_initial["chemin de la recherche"] = []
+        with open(directory_data + filename) as json_file:
+            donnees = json.load(json_file)
+            
+        def simplification_texte(num_pays,option):
+            if option == 0:
+                try:
+                    txt = donnees[num_pays]['People and Society']['Age structure']["0-14 years"]["text"]
+                except KeyError:
+                    txt = 'NA'
+            if option == 1:
+                try:
+                    txt = donnees[num_pays]['People and Society']['Age structure']["15-24 years"]["text"]
+                except KeyError:
+                    txt = 'NA'
+            if option == 2:
+                try:
+                    txt = donnees[num_pays]['People and Society']['Age structure']["25-54 years"]["text"]
+                except KeyError:
+                    txt = 'NA'
+            if option == 3:
+                try:
+                    txt = donnees[num_pays]['People and Society']['Age structure']["55-64 years"]["text"]
+                except KeyError:
+                    txt = 'NA'
+            if option == 4:
+                try:
+                    txt = donnees[num_pays]['People and Society']['Age structure']["65 years and over"]["text"]
+                except KeyError:
+                    txt = 'NA'
+        
+            for i in range(len(txt)):
+                if i > 30:
+                    txt = txt[:i]
+                    break
+                if txt[i] == '+':
+                    if txt[i+1] == '+':
+                        txt = txt[:i-1]
+                        break
+                if txt[i] == ";" or txt[i] == "(":
+                    txt = txt[:i]
+                    break
+            
+            if 'million' in txt:
+                txt = txt.replace('million', '*10**6')
+            if 'billion' in txt:
+                txt = txt.replace('billion', '*10**9')
+            if 'trillion' in txt:
+                txt = txt.replace('trillion', '*10**12')
+            lettres_a_supprimer = []
+            for i in range(len(txt)):
+                if i != 0 and txt[i] == '.' and txt[i-1] not in ["0","1","2","3","4","5","6","7","8","9","-",".","*"]:
+                    lettres_a_supprimer.append(txt[i])
+                if txt[i] not in ["0","1","2","3","4","5","6","7","8","9","-",".","*"]:
+                    lettres_a_supprimer.append(txt[i])
+            for lettre in lettres_a_supprimer:
+                txt = txt.replace(lettre,"")
+                
+            if len(txt) == 0 or txt[-1] == '-' :
+                return "NA"
+                
+            new_value = eval(txt)
+            
+            return new_value
+            
+        input("\nAppuyez sur entrer pour afficher le diagramme.")
+        
+        with open("../files/liste_pays_sans_nom.txt", "r") as liste:
+            liste_pays_sans_nom0 = liste.readlines()
+        liste_pays_sans_nom = []
+        for elm in liste_pays_sans_nom0:
+            liste_pays_sans_nom.append(int(elm[:-1]))
+            
+        classe_age_0 = []
+        classe_age_1 = []
+        classe_age_2 = []
+        classe_age_3 = []
+        classe_age_4 = []
+        
+        for num_pays in range(len(donnees)):
+            if num_pays not in liste_pays_sans_nom:
+                if simplification_texte(num_pays,0) != 'NA':
+                    classe_age_0.append(simplification_texte(num_pays,0))
+                if simplification_texte(num_pays,1) != 'NA':
+                    classe_age_1.append(simplification_texte(num_pays,1))
+                if simplification_texte(num_pays,2) != 'NA':
+                    classe_age_2.append(simplification_texte(num_pays,2))
+                if simplification_texte(num_pays,3) != 'NA':
+                    classe_age_3.append(simplification_texte(num_pays,3))
+                if simplification_texte(num_pays,4) != 'NA':
+                    classe_age_4.append(simplification_texte(num_pays,4))
+        
+        plt.title("Les Box-plots correspondant aux répartitions des valeurs des 5 classes d’âge pour tous les pays.")
+        plt.boxplot([classe_age_0, classe_age_1, classe_age_2, classe_age_3, classe_age_4], labels = ["0-14 years","15-24 years","25-54 years","55-64 years",">=65"])
+        plt.show()
+        
+        input("\nAppuyez sur entrer pour continuer.")
+        
+        return(self.representation_graphique(contenu))
+        
