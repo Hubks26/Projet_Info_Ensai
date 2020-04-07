@@ -51,7 +51,7 @@ class Data_Scientist(Consultant):
         choix_resume["individu"] = contenu["individu"]
         choix_resume["chemin de la recherche"] = []
         choix_resume["options"] = ["Afficher les critères usuels d'un ou plusieurs pays", "Afficher les premiers/derniers pays selon un certain critère", "Afficher les pays dont un critère dépasse un certain seuil", "Afficher le tableau des classes d'âge pour certains pays", "RETOUR AU MENU DE L'ACTEUR", "QUITTER"]
-        choix_resume["actions"] = [(lambda var : self.criteres_usuels(contenu)), (lambda var : self.top_flop(contenu)), (lambda var : Ouvert(var)), (lambda var : Ouvert(var)), (lambda var : Ouvert(self.contenu_du_menu_initial)), self.quitter]
+        choix_resume["actions"] = [(lambda var : self.criteres_usuels(contenu)), (lambda var : self.top_flop(contenu)), (lambda var : self.affichage_seuil(contenu)), (lambda var : Ouvert(var)), (lambda var : Ouvert(self.contenu_du_menu_initial)), self.quitter]
         return Ouvert(choix_resume)
     
     def representation_graphique(self, contenu):
@@ -204,7 +204,7 @@ class Data_Scientist(Consultant):
         
         return Ouvert(menu_affichage)
     
-    def top_flop(self,contenu, critere=0): #Cette fonction est à réécrire en intégralité.
+    def top_flop(self,contenu, critere=0): #Cette fonction est à réécrire en intégralité. Que se passe t'il si la base de donnees est composée de moins de 20 pays ? Moins de 10 pays ?
         self.contenu_du_menu_initial["chemin de la recherche"] = []
         with open(directory_data + filename) as json_file:
             donnees = json.load(json_file)
@@ -455,3 +455,210 @@ class Data_Scientist(Consultant):
         input("\nAppuyez sur entrer pour continuer.")
         
         return self.top_flop(contenu)
+    
+    def affichage_seuil(self, contenu, critere=0, seuil=None):
+        self.contenu_du_menu_initial["chemin de la recherche"] = []
+        with open(directory_data + filename) as json_file:
+            donnees = json.load(json_file)
+            
+        def simplification_texte(num_pays,option):
+            if option == 0:
+                try:
+                    txt = donnees[num_pays]['Geography']['Area']['total']['text']
+                except KeyError:
+                    txt = 'NA'
+            elif option == 1:
+                try:
+                    txt = donnees[num_pays]['People and Society']['Population']['text']
+                except KeyError:
+                    txt = 'NA'
+            elif option == 2:
+                try:
+                    txt = donnees[num_pays]['People and Society']['Population growth rate']['text']
+                except KeyError:
+                    txt = 'NA'
+            elif option == 3:
+                try:
+                    txt = donnees[num_pays]['Economy']['Inflation rate (consumer prices)']['text']
+                except KeyError:
+                    txt = 'NA'    
+            elif option == 4:
+                try:
+                    txt = donnees[num_pays]['Economy']['Debt - external']['text']
+                except KeyError:
+                    txt = 'NA'
+            elif option == 5:
+                try:
+                    txt = donnees[num_pays]['Economy']['Unemployment rate']['text']
+                except KeyError:
+                    txt = 'NA'
+            elif option == 6:
+                try:
+                    txt = donnees[num_pays]['People and Society']['Health expenditures']['text']
+                except KeyError:
+                    txt = 'NA'
+            elif option == 7:
+                try:
+                    txt = donnees[num_pays]['People and Society']['Education expenditures']['text']
+                except KeyError:
+                    txt = 'NA'
+            elif option == 8:
+                try:
+                    txt = donnees[num_pays]['Military and Security']['Military expenditures']['text']
+                except KeyError:
+                    txt = 'NA'
+            elif option == 9:
+                txt = donnees[num_pays]['Government']['Country name']['conventional short form']['text']
+                if txt == 'none':
+                    txt = donnees[num_pays]['Government']['Country name']['conventional long form']['text']
+                for i in range(len(txt)):
+                    if txt[i] == '+':
+                        if txt[i+1] == '+':
+                            txt = txt[:i-1]
+                            break
+                    if txt[i] == ";" or txt[i] == "(":
+                        txt = txt[:i]
+                        break
+                return txt
+
+            for i in range(len(txt)):
+                if i > 30:
+                    txt = txt[:i]
+                    break
+                if txt[i] == '+':
+                    if txt[i+1] == '+':
+                        txt = txt[:i-1]
+                        break
+                if txt[i] == ";" or txt[i] == "(":
+                    txt = txt[:i]
+                    break
+                
+            if 'million' in txt:
+                txt = txt.replace('million', '*10**6')
+            if 'billion' in txt:
+                txt = txt.replace('billion', '*10**9')
+            if 'trillion' in txt:
+                txt = txt.replace('trillion', '*10**12')
+            lettres_a_supprimer = []
+            for i in range(len(txt)):
+                if i != 0 and txt[i] == '.' and txt[i-1] not in ["0","1","2","3","4","5","6","7","8","9","-",".","*"]:
+                    lettres_a_supprimer.append(txt[i])
+                if txt[i] not in ["0","1","2","3","4","5","6","7","8","9","-",".","*"]:
+                    lettres_a_supprimer.append(txt[i])
+            for lettre in lettres_a_supprimer:
+                txt = txt.replace(lettre,"")
+                
+            if len(txt) == 0 or txt[-1] == '-' :
+                return "NA"
+                
+            new_value = eval(txt)
+            
+            return new_value
+        
+        if not critere:
+            choix_critere = {}
+            choix_critere["question"] = "Choisissez un critère."
+            choix_critere["individu"] = contenu["individu"]
+            choix_critere["chemin de la recherche"] = []
+            choix_critere["options"] = ["Superficie", "Population", "Croissance démographique", "Inflation", "Dette", "Taux de chômage", "Taux de dépenses en santé", "Taux de dépenses en éducation", "Taux de dépenses militaires"]
+            choix_critere["actions"] = [lambda var, i=i : self.affichage_seuil(contenu, i) for i in range(1,10)]
+            choix_critere["options"].append("RETOUR")
+            choix_critere["actions"].append(lambda var : self.resume_stat(contenu))
+            choix_critere["options"].append("RETOUR AU MENU DE L'ACTEUR")
+            choix_critere["actions"].append(lambda var : Ouvert(self.contenu_du_menu_initial))
+            choix_critere["options"].append("QUITTER")
+            choix_critere["actions"].append(self.quitter)
+            return Ouvert(choix_critere)
+        
+        if not seuil: #Vérifier que le seuil est bien un float
+            while True:
+                if critere == 1:
+                    seuil = input("\nEntrez le seuil (en sq km) que vous voulez :\n> ")
+                if critere == 2:
+                    seuil = input("\nEntrez le seuil (en nombre d'habitant) que vous voulez :\n> ")
+                if critere == 3:
+                    seuil = input("\nEntrez le seuil (en %) que vous voulez :\n> ")
+                if critere == 4:
+                    seuil = input("\nEntrez le seuil (en %) que vous voulez :\n> ")
+                if critere == 5:
+                    seuil = input("\nEntrez le seuil (en $) que vous voulez :\n> ")
+                if critere == 6:
+                    seuil = input("\nEntrez le seuil (en %) que vous voulez :\n> ")
+                if critere == 7:
+                    seuil = input("\nEntrez le seuil (en % of GDP) que vous voulez :\n> ")
+                if critere == 8:
+                    seuil = input("\nEntrez le seuil (en % of GDP) que vous voulez :\n> ")
+                if critere == 9:
+                    seuil = input("\nEntrez le seuil (en % of GDP) que vous voulez :\n> ")
+                try :
+                    seuil = float(seuil)
+                except :
+                    print("\nLa réponse attendue doit être un nombre.")
+                    continue
+                
+                return self.affichage_seuil(contenu, critere, seuil)
+        
+        with open("../files/liste_pays_sans_nom.txt", "r") as liste:
+            liste_pays_sans_nom0 = liste.readlines()
+        liste_pays_sans_nom = []
+        for elm in liste_pays_sans_nom0:
+            liste_pays_sans_nom.append(int(elm[:-1]))
+        
+        liste_triee = []
+        for num_pays in range(len(donnees)):
+            if num_pays not in liste_pays_sans_nom:
+                if simplification_texte(num_pays,critere-1) != 'NA':
+                    liste_triee.append((simplification_texte(num_pays,critere-1), simplification_texte(num_pays,9), num_pays))
+        liste_triee.sort()
+        liste_triee.reverse()
+        
+        pays_sup_seuil = []
+        
+        if critere == 1:
+            for elm in liste_triee:
+                if elm[0] >= int(seuil):
+                    pays_sup_seuil.append("{} : {}".format(elm[1],donnees[elm[2]]['Geography']['Area']['total']['text']))
+        if critere == 2:
+            for elm in liste_triee:
+                if elm[0] >= int(seuil):
+                    pays_sup_seuil.append("{} : {}".format(elm[1],donnees[elm[2]]['People and Society']['Population']['text']))
+        if critere == 3:
+            for elm in liste_triee:
+                if elm[0] >= int(seuil):
+                    pays_sup_seuil.append("{} : {}".format(elm[1],donnees[elm[2]]['People and Society']['Population growth rate']['text']))
+        if critere == 4:
+            for elm in liste_triee:
+                if elm[0] >= int(seuil):
+                    pays_sup_seuil.append("{} : {}".format(elm[1],donnees[elm[2]]['Economy']['Inflation rate (consumer prices)']['text']))
+        if critere == 5:
+            for elm in liste_triee:
+                if elm[0] >= int(seuil):
+                    pays_sup_seuil.append("{} : {}".format(elm[1],donnees[elm[2]]['Economy']['Debt - external']['text']))
+        if critere == 6:
+            for elm in liste_triee:
+                if elm[0] >= int(seuil):
+                    pays_sup_seuil.append("{} : {}".format(elm[1],donnees[elm[2]]['Economy']['Unemployment rate']['text']))
+        if critere == 7:
+            for elm in liste_triee:
+                if elm[0] >= int(seuil):
+                    pays_sup_seuil.append("{} : {}".format(elm[1],donnees[elm[2]]['People and Society']['Health expenditures']['text']))
+        if critere == 8:
+            for elm in liste_triee:
+                if elm[0] >= int(seuil):
+                    pays_sup_seuil.append("{} : {}".format(elm[1],donnees[elm[2]]['People and Society']['Education expenditures']['text']))
+        if critere == 9:
+            for elm in liste_triee:
+                if elm[0] >= int(seuil):
+                    pays_sup_seuil.append("{} : {}".format(elm[1],donnees[elm[2]]['Military and Security']['Military expenditures']['text']))
+                
+        if pays_sup_seuil == []:
+            print("\nIl n'existe aucun pays qui dépasse ce seuil.")
+        else:
+            print("\nVoici les pays qui dépassent ce seuil :\n")
+            for pays in pays_sup_seuil:
+                print(pays)
+            print("\n")
+            
+        input("Appuyez sur entrer pour continuer.")
+        
+        return self.affichage_seuil(contenu)
