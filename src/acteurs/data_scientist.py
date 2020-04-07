@@ -51,7 +51,7 @@ class Data_Scientist(Consultant):
         choix_resume["individu"] = contenu["individu"]
         choix_resume["chemin de la recherche"] = []
         choix_resume["options"] = ["Afficher les critères usuels d'un ou plusieurs pays", "Afficher les premiers/derniers pays selon un certain critère", "Afficher les pays dont un critère dépasse un certain seuil", "Afficher le tableau des classes d'âge pour certains pays", "RETOUR AU MENU DE L'ACTEUR", "QUITTER"]
-        choix_resume["actions"] = [(lambda var : self.criteres_usuels(contenu)), (lambda var : self.top_flop(contenu)), (lambda var : self.affichage_seuil(contenu)), (lambda var : Ouvert(var)), (lambda var : Ouvert(self.contenu_du_menu_initial)), self.quitter]
+        choix_resume["actions"] = [(lambda var : self.criteres_usuels(contenu)), (lambda var : self.top_flop(contenu)), (lambda var : self.affichage_seuil(contenu)), (lambda var : self.classes_age(contenu)), (lambda var : Ouvert(self.contenu_du_menu_initial)), self.quitter]
         return Ouvert(choix_resume)
     
     def representation_graphique(self, contenu):
@@ -662,3 +662,108 @@ class Data_Scientist(Consultant):
         input("Appuyez sur entrer pour continuer.")
         
         return self.affichage_seuil(contenu)
+    
+    def classes_age(self, contenu, pays=[], add_pays=False, suppr_pays=False):
+        self.contenu_du_menu_initial["chemin de la recherche"] = []
+        with open(directory_data + filename) as json_file:
+            donnees = json.load(json_file)
+            
+        def simplification_texte(num_pays,option):
+            if option == 0:
+                try:
+                    txt = donnees[num_pays]['People and Society']['Age structure']["0-14 years"]["text"]
+                except KeyError:
+                    txt = 'NA'
+            if option == 1:
+                try:
+                    txt = donnees[num_pays]['People and Society']['Age structure']["15-24 years"]["text"]
+                except KeyError:
+                    txt = 'NA'
+            if option == 2:
+                try:
+                    txt = donnees[num_pays]['People and Society']['Age structure']["25-54 years"]["text"]
+                except KeyError:
+                    txt = 'NA'
+            if option == 3:
+                try:
+                    txt = donnees[num_pays]['People and Society']['Age structure']["55-64 years"]["text"]
+                except KeyError:
+                    txt = 'NA'
+            if option == 4:
+                try:
+                    txt = donnees[num_pays]['People and Society']['Age structure']["65 years and over"]["text"]
+                except KeyError:
+                    txt = 'NA'
+            elif option == 5:
+                txt = donnees[num_pays]['Government']['Country name']['conventional short form']['text']
+                if txt == 'none':
+                    txt = donnees[num_pays]['Government']['Country name']['conventional long form']['text']
+            print(txt)
+            for i in range(len(txt)):
+                if txt[i] == ";" or txt[i] == "(":
+                    return txt[:i]
+            return txt
+        
+        if len(pays) == 0 or add_pays:
+            with open("../files/liste_pays_sans_nom.txt", "r") as liste:
+                liste_pays_sans_nom0 = liste.readlines()
+            liste_pays_sans_nom = []
+            for elm in liste_pays_sans_nom0:
+                liste_pays_sans_nom.append(int(elm[:-1]))
+                
+            if len(pays) >= 10 or len(pays) >= len(donnees)-len(liste_pays_sans_nom):
+                input("\nVous ne pouvez pas ajouter plus de pays à la table.\nAppuyez sur entrer pour continuer.")
+                return self.classes_age(contenu, pays)
+            
+            choix_pays = {}
+            choix_pays["question"] = "Choisissez un pays."
+            choix_pays["individu"] = contenu["individu"]
+            choix_pays["options"] = []
+            choix_pays["actions"] = []
+            choix_pays["chemin de la recherche"] = []
+                
+            for num_pays in range(len(donnees)):
+                if num_pays not in liste_pays_sans_nom and num_pays not in pays:
+                    nom_pays = simplification_texte(num_pays, 5)
+                    choix_pays["options"].append(nom_pays)
+                    choix_pays["actions"].append(lambda var, num_pays=num_pays : self.classes_age(contenu, pays+[num_pays]))
+                    
+            return Ouvert(choix_pays)
+        
+        noms_pays = []
+        for num_pays in pays:
+            noms_pays.append(simplification_texte(num_pays,5))
+        
+        if suppr_pays:
+            if len(pays) == 1:
+                input("\nIl doit y avoir au moins un pays dans la table.\nAppuyez sur entrer pour continuer.")
+            else :
+                choix_pays = {}
+                choix_pays["question"] = "Choisissez un pays à retirer de la table."
+                choix_pays["individu"] = contenu["individu"]
+                choix_pays["options"] = noms_pays
+                choix_pays["actions"] = []
+                for nom_pays in noms_pays:
+                    choix_pays["actions"].append(lambda var, nom_pays=nom_pays : self.classes_age(contenu, pays[:noms_pays.index(nom_pays)]+pays[noms_pays.index(nom_pays)+1:]))
+
+                choix_pays["chemin de la recherche"] = []
+                return Ouvert(choix_pays)
+        
+        menu_affichage = {}
+        menu_affichage["individu"] = contenu["individu"]
+        menu_affichage["chemin de la recherche"] = []
+        
+        criteres = ["0-14", "15-24", "25-54", "55-64", ">= 65"]
+        
+        valeurs_pays = [[simplification_texte(num_pays, 0) for num_pays in pays],
+                        [simplification_texte(num_pays, 1) for num_pays in pays],
+                        [simplification_texte(num_pays, 2) for num_pays in pays],
+                        [simplification_texte(num_pays, 3) for num_pays in pays],
+                        [simplification_texte(num_pays, 4) for num_pays in pays]]
+        
+        menu_affichage["question"] = pandas.DataFrame(valeurs_pays, index = criteres, columns = noms_pays)
+        
+        menu_affichage["options"] = ["Ajouter un pays à la table", "Retirer un pays de la table", "RETOUR", "RETOUR AU MENU DE L'ACTEUR", "QUITTER"]
+        menu_affichage["actions"] = [(lambda var : self.classes_age(var, pays, add_pays=True)),(lambda var : self.classes_age(var, pays, suppr_pays=True)), (lambda var : self.resume_stat(var)), (lambda var : Ouvert(self.contenu_du_menu_initial)), self.quitter]
+        
+        return Ouvert(menu_affichage)
